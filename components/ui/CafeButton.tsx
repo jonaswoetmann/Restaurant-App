@@ -6,7 +6,7 @@ type CafeButtonProps = {
 };
 
 export const CafeButton: React.FC<CafeButtonProps> = ({ onPress }) => {
-  return <Button title="Go to Cafe" onPress={onPress} />;
+  return <Button title="Cafe Vivaldi" onPress={onPress} />;
 };
 
 export default CafeButton;
