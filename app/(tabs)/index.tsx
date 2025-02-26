@@ -5,7 +5,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useRouter} from 'expo-router';
-import { CafeButton } from '@/app/(tabs)/home/CafeButton';
+import { CafeButton } from '@/components/ui/CafeButton';
 
 export default function HomeScreen() {
   const router = useRouter();
