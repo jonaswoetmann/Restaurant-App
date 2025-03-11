@@ -1,17 +1,23 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, SectionList, StyleSheet } from 'react-native';
 
 interface User {
+    id: number;
     name: string;
     price: number;
 }
 
-interface MenuListProps {
+interface Section {
+    title: string;
     data: User[];
+}
+
+interface MenuListProps {
+    sections: Section[];
     isLoading: boolean;
 }
 
-const MenuList: React.FC<MenuListProps> = ({ data, isLoading }) => {
+const MenuList: React.FC<MenuListProps> = ({ sections, isLoading }) => {
     const renderItem = ({ item }: { item: User }) => (
         <View style={styles.item}>
             <Text style={styles.itemText}>{item.name}</Text>
@@ -19,42 +25,50 @@ const MenuList: React.FC<MenuListProps> = ({ data, isLoading }) => {
         </View>
     );
 
-    return (
-        <View style={styles.container}>
-            {isLoading ? (
-                <Text>Loading...</Text>
-            ) : (
-                <FlatList
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            )}
+    const renderSectionHeader = ({
+                                     section,
+                                 }: {
+        section: Section;
+    }) => (
+        <View style={styles.header}>
+            <Text style={styles.headerText}>{section.title}</Text>
         </View>
     );
+
+
+    return (
+        <SectionList
+            sections={sections}
+            renderItem={renderItem}
+            renderSectionHeader={renderSectionHeader}
+            keyExtractor={(item) => item.id.toString()}
+        />
+    );
 };
+
 
 export default MenuList;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',
-        alignItems: 'center',
+    header: {
+        backgroundColor: '#f0f0f0',
+        padding: 8,
+    },
+    headerText: {
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     item: {
         padding: 16,
-        marginVertical: 8,
-        marginHorizontal: 16,
         backgroundColor: '#e6e6e6',
-        borderRadius: 8,
+        marginBottom: 8,
     },
     itemText: {
         fontSize: 18,
-        fontWeight: '500',
+        fontWeight: 'bold',
     },
     itemSubText: {
         fontSize: 14,
-        color: '#555',
+        color: '#666',
     },
 });

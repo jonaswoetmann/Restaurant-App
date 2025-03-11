@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import MenuList from './MenuList';
 
 export default function CafeScreen() {
-  const [data, setData] = useState<{ name: string; price: number }[]>([]);
+  const [sections, setSections] = useState<{ title: string; data: { id: number; name: string; price: number }[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://130.225.170.52:10331/menuItems/section/2');
-        const json: { name: string; price: number }[] = await response.json();
-        setData(json);
+        const section1 = await fetch('http://130.225.170.52:10331/menuItems/section/1').then((res) =>
+            res.json(),
+        );
+        const section2 = await fetch('http://130.225.170.52:10331/menuItems/section/2').then((res) =>
+            res.json(),
+        );
+        const section3 = await fetch('http://130.225.170.52:10331/menuItems/section/3').then((res) =>
+            res.json(),
+        );
+
+        setSections([
+          { title: 'Appetizers', data: section1.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
+          { title: 'Main Courses', data: section2.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
+          { title: 'Desserts', data: section3.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
+        ]);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -19,20 +31,26 @@ export default function CafeScreen() {
       }
     };
 
+
     fetchData();
   }, []);
 
   return (
       <View style={styles.container}>
-        <MenuList data={data} isLoading={isLoading} />
+        {isLoading ? (
+            <Text>Loading...</Text>
+        ) : (
+            <MenuList sections={sections} isLoading={isLoading} />
+        )}
       </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
 });
