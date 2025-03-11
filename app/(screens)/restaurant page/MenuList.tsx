@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 
 interface User {
     name: string;
-    email: string;
+    price: number;
 }
 
 interface MenuListProps {
@@ -15,7 +15,7 @@ const MenuList: React.FC<MenuListProps> = ({ data, isLoading }) => {
     const renderItem = ({ item }: { item: User }) => (
         <View style={styles.item}>
             <Text style={styles.itemText}>{item.name}</Text>
-            <Text style={styles.itemSubText}>Email: {item.email}</Text>
+            <Text style={styles.itemSubText}>Price: {item.price}</Text>
         </View>
     );
 
