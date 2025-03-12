@@ -24,6 +24,7 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes }) => {
         renderItem={({ item }) => (
           <Button title={item.name} onPress={() => router.push(item.route)} />
         )}
+        ItemSeparatorComponent={() => <View style={{ height: 20 }} />} 
       />
     </View>
   );
