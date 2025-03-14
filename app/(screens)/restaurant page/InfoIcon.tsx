@@ -1,22 +1,18 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import InfoIcon from './InfoIcon'; // Ensure the InfoIcon component is correctly imported
-
+import { MaterialIcons } from '@expo/vector-icons';
 interface InfoIconProps {
     style?: { marginRight: number }
 }
 
-export default function InfoBox({style}: InfoIconProps) {
+export default function InfoIcon({ style }: InfoIconProps) {
     return (
-        <View style={styles.infoBox}>
-            {}
-            <InfoIcon style={styles.icon}/>
-
-            {}
-            <Text style={styles.text}>This is an informational box.</Text>
+        <View style={[styles.iconContainer, style]}>
+            <MaterialIcons name="info" size={24} color="#00796b" />
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     infoBox: {
@@ -38,4 +34,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#00796b',
     },
+    iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
 });
