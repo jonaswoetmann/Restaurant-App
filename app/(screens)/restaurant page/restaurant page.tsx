@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import InfoIcon from './InfoIcon';
 import MenuList from './MenuList';
 
 export default function CafeScreen() {
+  const router = useRouter();
   const [sections, setSections] = useState<{ title: string; data: { id: number; name: string; price: number }[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,21 +40,26 @@ export default function CafeScreen() {
 
   return (
       <View style={styles.container}>
-        {}
         <View style={styles.headerBox}>
           <Text style={styles.headerText}>Cafe Vivaldi</Text>
+
+          <TouchableOpacity
+              onPress={() => {
+                router.push('/(screens)/restaurant info/restaurant info');
+              }}
+              style={styles.iconContainer}
+          >
+            <InfoIcon />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.container}>
-        {isLoading ? (
-            <Text>Loading...</Text>
-        ) : (
-            <MenuList sections={sections} isLoading={isLoading} />
-        )}
+          {isLoading ? <Text>Loading...</Text> : <MenuList sections={sections} isLoading={isLoading} />}
         </View>
       </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -63,14 +71,18 @@ const styles = StyleSheet.create({
     height: 150,
     padding: 16,
     backgroundColor: '#ffdd99',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    flexDirection: 'row',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+  },
+  iconContainer: {
+    padding: 8,
   },
 });
