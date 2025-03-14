@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from './InfoIcon';
 import MenuList from './MenuList';
 
@@ -8,13 +8,15 @@ export default function CafeScreen() {
   const router = useRouter();
   const [sections, setSections] = useState<{ title: string; data: { id: number; name: string; price: number }[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { id } = useLocalSearchParams();
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
 
-        const menus = await fetch('http://130.225.170.52:10331/menus/restaurant/2').then((res) => res.json());
+        const menus = await fetch(`http://130.225.170.52:10331/menus/restaurant/${id}`).then((res) => res.json());
 
         const menuSectionsPromises = menus.map((menu: { id: number }) =>
             fetch(`http://130.225.170.52:10331/menuSections/menu/${menu.id}`).then((res) => res.json())
