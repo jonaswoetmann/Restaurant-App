@@ -37,11 +37,18 @@ export default function CafeScreen() {
 
   return (
       <View style={styles.container}>
+        {}
+        <View style={styles.headerBox}>
+          <Text style={styles.headerText}>Cafe Vivaldi</Text>
+        </View>
+
+        <View style={styles.container}>
         {isLoading ? (
             <Text>Loading...</Text>
         ) : (
             <MenuList sections={sections} isLoading={isLoading} />
         )}
+        </View>
       </View>
   );
 };
@@ -49,8 +56,21 @@ export default function CafeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  headerBox: {
+    width: '100%',
+    height: 150,
+    padding: 16,
+    backgroundColor: '#ffdd99',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
   },
 });
