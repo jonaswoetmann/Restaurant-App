@@ -12,21 +12,37 @@ export default function CafeScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const section1 = await fetch('http://130.225.170.52:10331/menuItems/section/1').then((res) =>
-            res.json(),
-        );
-        const section2 = await fetch('http://130.225.170.52:10331/menuItems/section/2').then((res) =>
-            res.json(),
-        );
-        const section3 = await fetch('http://130.225.170.52:10331/menuItems/section/3').then((res) =>
-            res.json(),
+        setIsLoading(true);
+
+        const menus = await fetch('http://130.225.170.52:10331/menus/restaurant/2').then((res) => res.json());
+
+        const menuSectionsPromises = menus.map((menu: { id: number }) =>
+            fetch(`http://130.225.170.52:10331/menuSections/menu/${menu.id}`).then((res) => res.json())
         );
 
-        setSections([
-          { title: 'Appetizers', data: section1.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
-          { title: 'Main Courses', data: section2.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
-          { title: 'Desserts', data: section3.map((item: any, index: number) => ({ ...item, id: item.id ?? index, name: item.name ?? 'Unknown', price: item.price ?? 0 })) },
-        ]);
+        const menuSections = await Promise.all(menuSectionsPromises);
+
+        const menuItemsPromises = menuSections.flat().map((section: { id: number }) =>
+            fetch(`http://130.225.170.52:10331/menuItems/section/${section.id}`).then((res) => res.json())
+        );
+
+        const menuItems = await Promise.all(menuItemsPromises);
+
+        const sectionData = menuSections.flat().map((section: { id: number; name: string }, index: number) => {
+          const items = menuItems[index].map((item: { id: number; name: string; price: number }) => ({
+            id: item.id,
+            name: item.name || 'Unknown',
+            price: item.price || 0,
+          }));
+
+          return {
+            title: section.name || `Section ${section.id}`,
+            data: items,
+          };
+        });
+
+
+        setSections(sectionData);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
