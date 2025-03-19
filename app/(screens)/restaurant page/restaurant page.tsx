@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useCart } from '../cart/CartContext';
 
 export default function CafeScreen() {
-  const { cart, addToCart } = useCart(); // Access cart and addToCart function from the CartContext
+  const { cart, addToCart, decreaseQuantity, removeFromCart } = useCart(); // Access cart, addToCart, decreaseQuantity, and removeFromCart
   const [sections, setSections] = useState<{ title: string; data: { id: number; name: string; price: number }[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -11,7 +11,6 @@ export default function CafeScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch data for each menu section
         const section1 = await fetch('http://130.225.170.52:10331/menuItems/section/1').then((res) =>
             res.json()
         );
@@ -22,15 +21,14 @@ export default function CafeScreen() {
             res.json()
         );
 
-        // Map fetched data to ensure consistency
         setSections([
           {
             title: 'Appetizers',
             data: section1.map((item: any, index: number) => ({
               ...item,
-              id: item.id ?? index, // Fallback for id
-              name: item.name ?? 'Unknown', // Fallback for name
-              price: item.price ?? 0, // Fallback for price
+              id: item.id ?? index,
+              name: item.name ?? 'Unknown',
+              price: item.price ?? 0,
             })),
           },
           {
@@ -67,6 +65,21 @@ export default function CafeScreen() {
     return cart.some((item: { id: number }) => item.id === id);
   };
 
+  // Function to render quantity buttons in the cart
+  const renderQuantityButtons = (item: { id: number; quantity: number }) => {
+    return (
+        <View style={styles.quantityButtons}>
+          <TouchableOpacity onPress={() => decreaseQuantity(item.id)}>
+            <Text style={styles.changeButton}>-</Text>
+          </TouchableOpacity>
+          <Text>{item.quantity}</Text>
+          <TouchableOpacity onPress={() => addToCart({ ...cart.find((cartItem) => cartItem.id === item.id)!, quantity: 1 })}>
+            <Text style={styles.changeButton}>+</Text>
+          </TouchableOpacity>
+        </View>
+    );
+  };
+
   // Render function for each menu item with an "Add to Cart" button
   const renderMenuItem = (item: { id: number; name: string; price: number }) => {
     return (
@@ -76,11 +89,11 @@ export default function CafeScreen() {
             <Text style={styles.itemPrice}>{item.price} DKK</Text>
           </View>
           <TouchableOpacity
-              style={[styles.addButton, isInCart(item.id) && styles.inCartButton]} // Change button style if item is in cart
+              style={[styles.addButton, isInCart(item.id) && styles.inCartButton]}
               onPress={() => addToCart({ ...item, quantity: 1 })} // Add item to cart when clicked
           >
             <Text style={styles.addButtonText}>
-              {isInCart(item.id) ? 'In Cart' : 'Add to Cart'} {/* Change button text if item is in cart */}
+              {isInCart(item.id) ? 'In Cart' : 'Add to Cart'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -89,15 +102,27 @@ export default function CafeScreen() {
 
   return (
       <View style={styles.container}>
-        {/* Show loading text while data is being fetched */}
         {isLoading ? (
             <Text>Loading...</Text>
         ) : (
             sections.map((section) => (
                 <View key={section.title}>
-                  {/* Render each section */}
                   <Text style={styles.sectionTitle}>{section.title}</Text>
-                  {section.data.map(renderMenuItem)} {/* Render menu items in each section */}
+                  {section.data.map((item) => {
+                    return (
+                        <View key={item.id}>
+                          {renderMenuItem(item)}
+                          {isInCart(item.id) && (
+                              <View style={styles.cartActions}>
+                                {renderQuantityButtons(cart.find((cartItem) => cartItem.id === item.id)!)}
+                                <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                                  <Text style={styles.removeButton}>Remove</Text>
+                                </TouchableOpacity>
+                              </View>
+                          )}
+                        </View>
+                    );
+                  })}
                 </View>
             ))
         )}
@@ -148,5 +173,22 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  quantityButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  changeButton: {
+    fontSize: 20,
+    paddingHorizontal: 10,
+  },
+  cartActions: {
+    marginTop: 10,
+  },
+  removeButton: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 5,
   },
 });
