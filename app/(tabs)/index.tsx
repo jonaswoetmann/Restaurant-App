@@ -9,7 +9,7 @@ export default function HomeScreen() {
   const cafes = [
     { id: '1', name: 'Cafe Vivaldi', route: '/restaurant page/restaurant page' },
     { id: '2', name: 'Cafe Europa', route: '/item info/item info' },
-    { id: '3', name: 'Cafe Noir', route: '/restaurant page/noir' },
+    { id: '3', name: 'Cafe Noir', route: '/cart/cart'},
   ];
 
  
