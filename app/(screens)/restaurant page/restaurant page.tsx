@@ -6,6 +6,7 @@ import MenuList from './MenuList';
 
 export default function CafeScreen() {
   const router = useRouter();
+  const [restaurantName, setRestaurantName] = useState('Loading...');
   const [sections, setSections] = useState<{ title: string; data: { id: number; name: string; price: number }[] }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useLocalSearchParams();
@@ -15,6 +16,9 @@ export default function CafeScreen() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+
+        const restaurant = await fetch(`http://130.225.170.52:10331/restaurants/${id}`).then((res) => res.json());
+        setRestaurantName(restaurant[0].name || 'Unknown');
 
         const menus = await fetch(`http://130.225.170.52:10331/menus/restaurant/${id}`).then((res) => res.json());
 
@@ -59,7 +63,7 @@ export default function CafeScreen() {
   return (
       <View style={styles.container}>
         <View style={styles.headerBox}>
-          <Text style={styles.headerText}>Cafe Vivaldi</Text>
+          <Text style={styles.headerText}>{restaurantName}</Text>
 
           <TouchableOpacity
               onPress={() => {
