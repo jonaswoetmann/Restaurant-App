@@ -1,18 +1,17 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-// Define types for cart item and the context
 type CartItem = { id: number; name: string; price: number; quantity: number };
 
 type CartContextType = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
+  decreaseQuantity: (id: number) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Cart Provider component
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
@@ -20,12 +19,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart((prevCart) => {
       const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
       if (existingItem) {
-        // Update quantity if item already exists
         return prevCart.map((cartItem) =>
-          cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+            cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
         );
       }
-      // Add new item to the cart
       return [...prevCart, { ...item, quantity: 1 }];
     });
   };
@@ -34,14 +31,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  const decreaseQuantity = (id: number) => {
+    setCart((prevCart) => {
+      return prevCart
+          .map((cartItem) =>
+              cartItem.id === id && cartItem.quantity > 1
+                  ? { ...cartItem, quantity: cartItem.quantity - 1 }
+                  : cartItem
+          )
+          .filter((cartItem) => cartItem.quantity > 0);
+    });
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
-      {children}
-    </CartContext.Provider>
+      <CartContext.Provider value={{ cart, addToCart, removeFromCart, decreaseQuantity }}>
+        {children}
+      </CartContext.Provider>
   );
 }
 
-// Custom hook to use the cart context
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
