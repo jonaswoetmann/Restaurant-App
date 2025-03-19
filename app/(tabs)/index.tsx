@@ -1,31 +1,58 @@
-import { Image, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, View, Text } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter} from 'expo-router';
 import { CafeList } from '@/components/ui/CafeList';
 
 export default function HomeScreen() {
-  const router = useRouter();
+    const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-  const cafes = [
-    { id: '1', name: 'Cafe Vivaldi', route: '/restaurant page/restaurant page' },
-    { id: '2', name: 'Cafe Europa', route: '/item info/item info' },
-    { id: '3', name: 'Cafe Noir', route: '/restaurant page/noir' },
-  ];
+    useEffect(() => {
+        const fetchCafes = async () => {
+            try {
+                setIsLoading(true);
 
- 
+                const response = await fetch('http://130.225.170.52:10331/restaurants');
+                const data = await response.json();
 
-  return (
-    <View style={{ flex: 1 }}>
-      <Image
-        source={require('@/assets/images/partial-react-logo.png')}
-        style={styles.reactLogo}
-      />
-      <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <CafeList cafes={cafes} />
-      </ThemedView>
-    </View>
-  );
+                const mappedCafes = data.map((restaurant: { id: number; name: string }) => ({
+                    id: restaurant.id.toString(),
+                    name: restaurant.name,
+                    route: `/restaurant page/restaurant page?id=${restaurant.id}`,
+                }));
+
+                setCafes(mappedCafes);
+            } catch (error) {
+                console.error('Error fetching cafes:', error);
+                setCafes([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCafes();
+    }, []);
+
+
+
+
+    return (
+        <View style={{ flex: 1 }}>
+            <Image
+                source={require('@/assets/images/partial-react-logo.png')}
+                style={styles.reactLogo}
+            />
+            <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                {isLoading ? (
+                    <Text>Loading...</Text>
+                    ) : (
+                    <CafeList cafes={cafes} />
+                )}
+            </ThemedView>
+        </View>
+    );
 }
+
 
 const styles = StyleSheet.create({
   reactLogo: {
