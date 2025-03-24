@@ -17,19 +17,19 @@ export default function CafeScreen() {
       try {
         setIsLoading(true);
 
-        const restaurant = await fetch(`http://130.225.170.52:10331/restaurants/${id}`).then((res) => res.json());
+        const restaurant = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then((res) => res.json());
         setRestaurantName(restaurant[0].name || 'Unknown');
 
-        const menus = await fetch(`http://130.225.170.52:10331/menus/restaurant/${id}`).then((res) => res.json());
+        const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then((res) => res.json());
 
         const menuSectionsPromises = menus.map((menu: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/menuSections/menu/${menu.id}`).then((res) => res.json())
+            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then((res) => res.json())
         );
 
         const menuSections = await Promise.all(menuSectionsPromises);
 
         const menuItemsPromises = menuSections.flat().map((section: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/menuItems/section/${section.id}`).then((res) => res.json())
+            fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then((res) => res.json())
         );
 
         const menuItems = await Promise.all(menuItemsPromises);

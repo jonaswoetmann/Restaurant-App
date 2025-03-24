@@ -12,7 +12,7 @@ export default function HomeScreen() {
             try {
                 setIsLoading(true);
 
-                const response = await fetch('http://130.225.170.52:10331/restaurants');
+                const response = await fetch('http://130.225.170.52:10331/api/restaurants');
                 const data = await response.json();
 
                 const mappedCafes = data.map((restaurant: { id: number; name: string }) => ({
