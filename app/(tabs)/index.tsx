@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View, Text } from 'react-native';
+import { Animated, StyleSheet, View, Text } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 
 export default function HomeScreen() {
     const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const scrollY = new Animated.Value(0);
 
     useEffect(() => {
         const fetchCafes = async () => {
@@ -33,20 +34,23 @@ export default function HomeScreen() {
         fetchCafes();
     }, []);
 
-
+    const imageHeight = scrollY.interpolate({
+        inputRange: [0, 500],
+        outputRange: [400, 100],
+    })
 
 
     return (
         <View style={{ flex: 1 }}>
-            <Image
+            <Animated.Image
                 source={require('@/assets/images/partial-react-logo.png')}
-                style={styles.reactLogo}
+                style={[styles.reactLogo, {height: imageHeight}]}
             />
             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 {isLoading ? (
                     <Text>Loading...</Text>
                     ) : (
-                    <CafeList cafes={cafes} />
+                    <CafeList cafes={cafes} scrollY={scrollY} />
                 )}
             </ThemedView>
         </View>
@@ -55,12 +59,11 @@ export default function HomeScreen() {
 
 
 const styles = StyleSheet.create({
-  reactLogo: {
-    height: 178,
-    width: 290,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
+    reactLogo: {
+        width: '100%',
+        resizeMode: 'contain',
+    },
+    scrollContainer: {
+    },
 });
-
 
