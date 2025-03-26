@@ -27,13 +27,6 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Orders',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
@@ -44,7 +37,7 @@ export default function TabLayout() {
         name="account"
         options={{
           title: 'Account',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.crop.circle.fill" color={color} />,
         }}
       />
     </Tabs>
