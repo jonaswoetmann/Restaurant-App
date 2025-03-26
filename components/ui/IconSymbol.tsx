@@ -12,6 +12,7 @@ const MAPPING = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'person.crop.circle.fill': 'account-circle',
+  'qrcode.viewfinder': 'qr-code-scanner',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
 } as Partial<
