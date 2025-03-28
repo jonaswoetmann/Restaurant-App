@@ -29,15 +29,15 @@ export default function RootLayout() {
     }
 
     return (
-        <CartProvider> {/* ✅ Keep CartProvider as outer wrapper */}
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <Stack screenOptions={{ headerTitle: ' ' }}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <CartProvider>
+                <Stack screenOptions={{ headerTitle: '' }}>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="+not-found" />
                 </Stack>
                 <StatusBar style="auto" />
-            </ThemeProvider>
-        </CartProvider>
+            </CartProvider>
+        </ThemeProvider>
     );
 }
 
