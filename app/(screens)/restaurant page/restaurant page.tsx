@@ -160,7 +160,7 @@ export default function CafeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'Colors.background',
   },
   headerBox: {
     width: '100%',
