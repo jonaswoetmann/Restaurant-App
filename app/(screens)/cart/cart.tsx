@@ -7,6 +7,11 @@ export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
   const handleOrder = async () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty. Please add items before placing an order.');
+      return;
+    }
+
     try {
       const orderPayload = {
         orderTable: 1,
