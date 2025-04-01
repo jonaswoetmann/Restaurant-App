@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import InfoIcon from './InfoIcon';
+import InfoIcon from '../restaurant page/InfoIcon'; // adjust path if needed
 import { useCart } from '../cart/CartContext';
 
 export default function CafeScreen() {
@@ -79,7 +79,6 @@ export default function CafeScreen() {
         <View style={styles.headerBox}>
           <Text style={styles.headerText}>{restaurantName}</Text>
 
-          {/* Info and Cart buttons */}
           <View style={styles.headerActions}>
             <TouchableOpacity
                 onPress={() => router.push('/restaurant info/restaurant info')}
@@ -114,14 +113,25 @@ export default function CafeScreen() {
 
                           return (
                               <View key={menuItem.id} style={styles.menuItem}>
-                                <View>
+                                <View style={{ flex: 1 }}>
                                   <Text style={styles.menuText}>{menuItem.name}</Text>
                                   <Text style={styles.priceText}>{menuItem.price} DKK</Text>
                                 </View>
 
-                                <View style={styles.actionBox}>
+                                <View style={styles.infoAndActionsRow}>
+                                  <TouchableOpacity
+                                      onPress={() =>
+                                          router.push({
+                                            pathname: '/item info/item info',
+                                            params: { itemID: menuItem.id },
+                                          })
+                                      }
+                                  >
+                                    <InfoIcon />
+                                  </TouchableOpacity>
+
                                   {quantity > 0 ? (
-                                      <>
+                                      <View style={styles.actionBox}>
                                         <TouchableOpacity
                                             onPress={() => decreaseQuantity(menuItem.id)}
                                             style={styles.qtyButton}
@@ -135,7 +145,7 @@ export default function CafeScreen() {
                                         >
                                           <Text style={styles.qtyButtonText}>+</Text>
                                         </TouchableOpacity>
-                                      </>
+                                      </View>
                                   ) : (
                                       <TouchableOpacity
                                           onPress={() => addToCart(menuItem)}
@@ -160,7 +170,7 @@ export default function CafeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'Colors.background',
+    backgroundColor: '#f5f5f5',
   },
   headerBox: {
     width: '100%',
@@ -225,6 +235,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  infoAndActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   addButton: {
     backgroundColor: '#4CAF50',
     paddingVertical: 6,
@@ -257,3 +272,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
