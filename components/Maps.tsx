@@ -41,7 +41,7 @@ export default function Maps() {
        if(myLocation.latitude && myLocation.longitude){
            const camera = {
                center: {
-                   latitude: myLocation.latitude,
+                   latitude: myLocation.latitude - 0.007,
                    longitude: myLocation.longitude,
                },
                pitch: 0,
