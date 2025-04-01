@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, Text } from 'react-native';
+import { Animated, View, Text } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
+import Maps from '@/components/Maps';
 
 export default function HomeScreen() {
     const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
@@ -34,18 +35,18 @@ export default function HomeScreen() {
         fetchCafes();
     }, []);
 
-    const imageHeight = scrollY.interpolate({
+    const mapHeight = scrollY.interpolate({
         inputRange: [0, 500],
         outputRange: [400, 100],
+        extrapolate: 'clamp',
     })
 
 
     return (
         <View style={{ flex: 1 }}>
-            <Animated.Image
-                source={require('@/assets/images/partial-react-logo.png')}
-                style={[styles.reactLogo, {height: imageHeight}]}
-            />
+            <Animated.View style={[ {height: mapHeight} ]}>
+                <Maps/>
+            </Animated.View>
             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 {isLoading ? (
                     <Text>Loading...</Text>
@@ -56,14 +57,3 @@ export default function HomeScreen() {
         </View>
     );
 }
-
-
-const styles = StyleSheet.create({
-    reactLogo: {
-        width: '100%',
-        resizeMode: 'contain',
-    },
-    scrollContainer: {
-    },
-});
-

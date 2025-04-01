@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Animated } from 'react-native';
+import {View, Animated, StyleSheet} from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'expo-router';
 
@@ -18,7 +18,7 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY }) => {
   const router = useRouter();
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.list}>
       <Animated.FlatList
         data={cafes}
         keyExtractor={(item) => item.id}
@@ -35,5 +35,12 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+    paddingTop: 10,
+  }
+});
 
 export default CafeList;
