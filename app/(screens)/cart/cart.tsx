@@ -42,44 +42,48 @@ export default function CartScreen() {
   };
 
   return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Your Cart</Text>
-        <FlatList
-            data={cart}
-            keyExtractor={(item) => item.id.toString()}
-            ListEmptyComponent={<Text>Your cart is empty.</Text>}
-            renderItem={({ item }) => (
-                <View style={styles.item}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.price}>{item.price} DKK</Text>
+      <View style={styles.screenContainer}>
+        <View style={styles.cartContainer}>
+          <Text style={styles.text}>Your Cart</Text>
+          <FlatList
+              data={cart}
+              keyExtractor={(item) => item.id.toString()}
+              ListEmptyComponent={<Text>Your cart is empty.</Text>}
+              renderItem={({ item }) => (
+                  <View style={styles.item}>
+                    <Text style={styles.name}>{item.name}</Text>
+                    <Text style={styles.price}>{item.price} DKK</Text>
 
-                  <View style={styles.controls}>
-                    <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
-                      <Text style={styles.qtyButtonText}>-</Text>
-                    </TouchableOpacity>
+                    <View style={styles.controls}>
+                      <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
+                        <Text style={styles.qtyButtonText}>-</Text>
+                      </TouchableOpacity>
 
-                    <Text style={styles.quantity}>{item.quantity}</Text>
+                      <Text style={styles.quantity}>{item.quantity}</Text>
 
-                    <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
-                      <Text style={styles.qtyButtonText}>+</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
+                        <Text style={styles.qtyButtonText}>+</Text>
+                      </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                      <Text style={styles.remove}>Remove</Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                        <Text style={styles.remove}>Remove</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-            )}
-        />
-        <OrderButton onPress={handleOrder} />
-
+              )}
+          />
+          <OrderButton onPress={handleOrder} />
+        </View>
       </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  cartContainer: {
     paddingTop: 40,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
