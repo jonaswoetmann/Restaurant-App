@@ -1,9 +1,40 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useCart } from './CartContext';
+import { OrderButton } from './OrderButton';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+
+  const handleOrder = async () => {
+    try {
+      const orderPayload = {
+        orderTable: 1,
+        restaurantId: 1,
+        userId: 1,
+        menuItems: cart.map(item => item.id)
+      };
+
+      const response = await fetch('http://130.225.170.52:10331/api/orders/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to place order: ${response.statusText}`);
+        alert('An error occurred while placing the order.');
+        return;
+      }
+
+      alert('Order placed successfully!');
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while placing the order.');
+    }
+  };
 
   return (
       <View style={styles.container}>
@@ -35,6 +66,8 @@ export default function CartScreen() {
                 </View>
             )}
         />
+        <OrderButton onPress={handleOrder} />
+
       </View>
   );
 }
@@ -92,4 +125,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
