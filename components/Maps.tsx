@@ -4,8 +4,8 @@ import {Dimensions, StyleSheet, View} from 'react-native';
 
 export default function Maps() {
     const initialLocation = {
-        latitude: 55.8,
-        longitude: 8.0,
+        latitude: 55.779655,
+        longitude: 12.521401,
     }
 
     const [myLocation, setMyLocation] = useState(initialLocation);
@@ -14,14 +14,16 @@ export default function Maps() {
         <View style={styles.container}>
             <MapView
                 style={styles.map}
-                initialRegion={
-                    {
+                initialCamera={{
+                    center: {
                         latitude: myLocation.latitude,
                         longitude: myLocation.longitude,
-                        latitudeDelta: 0.1,
-                        longitudeDelta: 0.1,
-                    }
-                }
+                    },
+                    pitch: 0,
+                    heading: 0,
+                    altitude: 500,
+                    zoom: 14,
+                }}
                 provider='google'
             >
 
