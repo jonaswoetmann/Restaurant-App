@@ -10,7 +10,14 @@ export default function CafeScreen() {
   const [restaurantName, setRestaurantName] = useState('Loading...');
   const [menuDescription, setMenuDescription] = useState('');
   const [sections, setSections] = useState<
-      { title: string; data: { id: number; name: string; price: number; sectionName: string }[] }[]
+      { title: string; data: {
+          description: string;
+          id: number;
+          name: string;
+          price: number;
+          sectionName: string;
+
+        }[] }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,11 +47,12 @@ export default function CafeScreen() {
         const sectionData = menuSections.flat().map(
             (section: { id: number; name: string }, index: number) => {
               const items = menuItems[index].map(
-                  (item: { id: number; name: string; price: number }) => ({
+                  (item: { id: number; name: string; price: number; description: string }) => ({
                     id: item.id,
                     name: item.name || 'Unknown',
                     price: item.price || 0,
                     sectionName: section.name,
+                    description: item.description || 'No description available',
                   })
               );
 
@@ -120,7 +128,7 @@ export default function CafeScreen() {
                                               itemID: menuItem.id,
                                               itemName: menuItem.name,
                                               sectionName: menuItem.sectionName,
-                                              description: menuDescription,
+                                              description: menuItem.description,
                                             },
                                           })
                                       }
