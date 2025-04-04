@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
+import { Picker } from '@react-native-picker/picker';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+  const [selectedTable, setSelectedTable] = React.useState(1);
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -14,9 +16,8 @@ export default function CartScreen() {
 
     try {
       const orderPayload = {
-        orderTable: 1,
+        orderTable: parseInt(String(selectedTable)),
         restaurantId: 1,
-        userId: 1,
         menuItems: cart.map(item => item.id)
       };
 
@@ -72,6 +73,16 @@ export default function CartScreen() {
                   </View>
               )}
           />
+          <Text style={styles.dropdownLabel}>Select Table</Text>
+          <Picker
+              selectedValue={selectedTable}
+              onValueChange={(itemValue) => setSelectedTable(itemValue)}
+              style={styles.picker}
+          >
+            {Array.from({ length: 50 }, (_, i) => (
+                <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
+            ))}
+          </Picker>
           <OrderButton onPress={handleOrder} />
         </View>
       </View>
@@ -92,6 +103,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  dropdownLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 6,
+    marginTop: 10,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
   },
   item: {
     padding: 12,
