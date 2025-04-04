@@ -70,7 +70,6 @@ export default function Maps() {
                     altitude: 500,
                     zoom: 14,
                 }}
-                provider='google'
             >
 
                 { myLocation.latitude && myLocation.longitude &&
