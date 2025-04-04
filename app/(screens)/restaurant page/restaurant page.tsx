@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import InfoIcon from '../restaurant page/InfoIcon'; // adjust path if needed
+import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
 
 export default function CafeScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [restaurantName, setRestaurantName] = useState('Loading...');
+  const [menuDescription, setMenuDescription] = useState('');
   const [sections, setSections] = useState<
-      { title: string; data: { id: number; name: string; price: number }[] }[]
+      { title: string; data: { id: number; name: string; price: number; sectionName: string }[] }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,29 +21,20 @@ export default function CafeScreen() {
       try {
         setIsLoading(true);
 
-        const restaurant = await fetch(
-            `http://130.225.170.52:10331/api/restaurants/${id}`
-        ).then((res) => res.json());
+        const restaurant = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then(res => res.json());
         setRestaurantName(restaurant[0]?.name || 'Unknown');
 
-        const menus = await fetch(
-            `http://130.225.170.52:10331/api/menus/restaurant/${id}`
-        ).then((res) => res.json());
+        const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then(res => res.json());
+        setMenuDescription(menus[0]?.description || 'No description available');
 
         const menuSectionsPromises = menus.map((menu: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then((res) =>
-                res.json()
-            )
+            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then(res => res.json())
         );
         const menuSections = await Promise.all(menuSectionsPromises);
 
-        const menuItemsPromises = menuSections
-            .flat()
-            .map((section: { id: number }) =>
-                fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then((res) =>
-                    res.json()
-                )
-            );
+        const menuItemsPromises = menuSections.flat().map((section: { id: number }) =>
+            fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
+        );
         const menuItems = await Promise.all(menuItemsPromises);
 
         const sectionData = menuSections.flat().map(
@@ -52,6 +44,7 @@ export default function CafeScreen() {
                     id: item.id,
                     name: item.name || 'Unknown',
                     price: item.price || 0,
+                    sectionName: section.name,
                   })
               );
 
@@ -123,7 +116,12 @@ export default function CafeScreen() {
                                       onPress={() =>
                                           router.push({
                                             pathname: '/item info/item info',
-                                            params: { itemID: menuItem.id },
+                                            params: {
+                                              itemID: menuItem.id,
+                                              itemName: menuItem.name,
+                                              sectionName: menuItem.sectionName,
+                                              description: menuDescription,
+                                            },
                                           })
                                       }
                                   >
@@ -272,4 +270,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
