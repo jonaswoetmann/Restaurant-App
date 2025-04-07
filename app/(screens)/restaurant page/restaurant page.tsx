@@ -13,7 +13,7 @@ export default function CafeScreen() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { cart, addToCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cart, addToCart, increaseQuantity, decreaseQuantity, setRestaurantId} = useCart();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +24,7 @@ export default function CafeScreen() {
             `http://130.225.170.52:10331/api/restaurants/${id}`
         ).then((res) => res.json());
         setRestaurantName(restaurant[0]?.name || 'Unknown');
+        setRestaurantId(Number(id));
 
         const menus = await fetch(
             `http://130.225.170.52:10331/api/menus/restaurant/${id}`

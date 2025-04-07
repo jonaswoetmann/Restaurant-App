@@ -5,7 +5,7 @@ import { OrderButton } from './OrderButton';
 import { Picker } from '@react-native-picker/picker';
 
 export default function CartScreen() {
-  const { cart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+  const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
 
   const handleOrder = async () => {
@@ -17,7 +17,8 @@ export default function CartScreen() {
     try {
       const orderPayload = {
         orderTable: parseInt(String(selectedTable)),
-        restaurantId: 1,
+        restaurantId: restaurantId,
+        userId: 1,
         menuItems: cart.map(item => item.id)
       };
 

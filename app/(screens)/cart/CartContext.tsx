@@ -1,4 +1,3 @@
-// app/(screens)/cart/CartContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type MenuItem = {
@@ -15,6 +14,8 @@ type CartContextType = {
   removeFromCart: (itemId: number) => void;
   increaseQuantity: (itemId: number) => void;
   decreaseQuantity: (itemId: number) => void;
+  restaurantId: number | null;
+  setRestaurantId: (id: number | null) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -29,6 +30,7 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [restaurantId, setRestaurantId] = useState<number | null>(null);
 
   const addToCart = (item: MenuItem) => {
     setCart((prev) => {
@@ -66,7 +68,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
       <CartContext.Provider
-          value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity }}
+          value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, setRestaurantId, restaurantId }}
       >
         {children}
       </CartContext.Provider>
