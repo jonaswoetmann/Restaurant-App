@@ -2,7 +2,6 @@ import React, {useEffect, useState, useRef} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Button, StyleSheet, View} from 'react-native';
 import * as Location from 'expo-location';
-import Constants from 'expo-constants';
 
 export default function Maps() {
     const initialLocation = {
@@ -94,7 +93,6 @@ export default function Maps() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: Constants.statusBarHeight,
     },
     map: {
         flex: 1,
