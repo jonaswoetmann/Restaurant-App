@@ -82,7 +82,16 @@ export default function CafeScreen() {
 
           <View style={styles.headerActions}>
             <TouchableOpacity
-                onPress={() => router.push('/restaurant info/restaurant info')}
+                onPress={() =>
+                    router.push({
+                      pathname: '/restaurant info/restaurant info',
+                      params: {
+                        id: id,
+                        name: restaurantName,
+                        description: menuDescription,
+                      },
+                    })
+                }
                 style={styles.iconContainer}
             >
               <InfoIcon />
