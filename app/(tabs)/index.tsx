@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
@@ -12,8 +12,10 @@ export default function HomeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [searching, setSearching] = useState(false);
-    const scrollY = useState(new Animated.Value(0))[0];
-    const mapAnimatedHeight = useState(new Animated.Value(400))[0];
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const mapAnimatedHeight = useRef(new Animated.Value(350)).current;
+    const prevScrollY = useRef(0);
+    const isCollapsed = useRef(false);
 
     useEffect(() => {
         const fetchCafes = async () => {
@@ -53,27 +55,34 @@ export default function HomeScreen() {
         setSearching(lowercasedQuery.length > 0);
     }), [searchQuery, cafes]
 
-    useEffect(() => {
-        const listenerId = scrollY.addListener(({ value }) => {
-            if (value < 250) {
-                Animated.timing(mapAnimatedHeight, {
-                    toValue: 400,
-                    duration: 300,
-                    useNativeDriver: false,
-                }).start();
-            } else {
-                Animated.timing(mapAnimatedHeight, {
-                    toValue: 100,
-                    duration: 300,
-                    useNativeDriver: false,
-                }).start();
-            }
-        });
+    const handleScroll = (event: any) => {
+        const currentY = event.nativeEvent.contentOffset.y;
+        const scrollingDown = currentY > prevScrollY.current;
+        const scrollingUp = currentY < prevScrollY.current;
 
-        return () => {
-            scrollY.removeListener(listenerId);
-        };
-    }, [scrollY]);
+        const collapseThreshold = 120;
+        const expandThreshold = 1;
+
+        if (scrollingDown && !isCollapsed.current && currentY > collapseThreshold) {
+            isCollapsed.current = true;
+            Animated.timing(mapAnimatedHeight, {
+                toValue: 100,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        }
+        if (scrollingUp && isCollapsed.current && currentY < expandThreshold) {
+            isCollapsed.current = false;
+            Animated.timing(mapAnimatedHeight, {
+                toValue: 350,
+                duration: 100,
+                useNativeDriver: false,
+            }).start();
+        }
+
+        prevScrollY.current = currentY;
+    };
+
 
     return (
         <KeyboardAvoidingView
@@ -95,24 +104,23 @@ export default function HomeScreen() {
                     </View>
                     {searching && (
                         <View style={styles.overlay}>
-                            <CafeList cafes={filteredCafes} scrollY={scrollY} />
+                            <CafeList cafes={filteredCafes} scrollY={scrollY} onScroll={handleScroll} />
                         </View>
                     )}
 
                     {!searching && (
-                        <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
-                            <Maps />
-                        </Animated.View>
-                    )}
-
-                    {!searching && (
-                        <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            {isLoading ? (
-                                <Text>Loading...</Text>
-                            ) : (
-                                <CafeList cafes={filteredCafes} scrollY={scrollY} />
-                            )}
-                        </ThemedView>
+                        <>
+                            <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
+                                <Maps />
+                            </Animated.View>
+                            <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                {isLoading ? (
+                                    <Text>Loading...</Text>
+                                ) : (
+                                    <CafeList cafes={filteredCafes} scrollY={scrollY} onScroll={handleScroll} />
+                                )}
+                            </ThemedView>
+                        </>
                     )}
                 </View>
             </TouchableWithoutFeedback>

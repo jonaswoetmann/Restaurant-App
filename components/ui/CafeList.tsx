@@ -12,9 +12,10 @@ type Cafe = {
 type CafeListProps = {
   cafes: Cafe[];
   scrollY: Animated.Value;
+  onScroll: (event: any) => void;
 };
 
-export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY }) => {
+export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY, onScroll }) => {
   const router = useRouter();
 
   return (
@@ -28,7 +29,7 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY }) => {
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
+            { useNativeDriver: false, listener: onScroll }
         )}
         scrollEventThrottle={1}
       />
