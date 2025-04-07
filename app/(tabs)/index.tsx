@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Animated, View, Text } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
-import Maps from '@/components/Maps';
+import Maps from '@/components/ui/Maps';
 
 export default function HomeScreen() {
     const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const scrollY = new Animated.Value(0);
+    const scrollY = useState(new Animated.Value(0))[0];
+    const mapAnimatedHeight = useState(new Animated.Value(400))[0];
 
     useEffect(() => {
         const fetchCafes = async () => {
@@ -35,16 +36,31 @@ export default function HomeScreen() {
         fetchCafes();
     }, []);
 
-    const mapHeight = scrollY.interpolate({
-        inputRange: [0, 500],
-        outputRange: [400, 100],
-        extrapolate: 'clamp',
-    })
+    useEffect(() => {
+        const listenerId = scrollY.addListener(({ value }) => {
+            if (value < 250) {
+                Animated.timing(mapAnimatedHeight, {
+                    toValue: 400,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } else {
+                Animated.timing(mapAnimatedHeight, {
+                    toValue: 100,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            }
+        });
 
+        return () => {
+            scrollY.removeListener(listenerId);
+        };
+    }, [scrollY]);
 
     return (
         <View style={{ flex: 1 }}>
-            <Animated.View style={[ {height: mapHeight} ]}>
+            <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
                 <Maps/>
             </Animated.View>
             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

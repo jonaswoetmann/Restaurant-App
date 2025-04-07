@@ -1,7 +1,8 @@
 import React, {useEffect, useState, useRef} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {Button, Dimensions, StyleSheet, View} from 'react-native';
+import {Button, StyleSheet, View} from 'react-native';
 import * as Location from 'expo-location';
+import Constants from 'expo-constants';
 
 export default function Maps() {
     const initialLocation = {
@@ -41,7 +42,7 @@ export default function Maps() {
        if(myLocation.latitude && myLocation.longitude){
            const camera = {
                center: {
-                   latitude: myLocation.latitude - 0.007,
+                   latitude: myLocation.latitude,
                    longitude: myLocation.longitude,
                },
                pitch: 0,
@@ -93,10 +94,10 @@ export default function Maps() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: Constants.statusBarHeight,
     },
     map: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+        flex: 1,
     },
     locationContainer: {
         position: 'absolute',
