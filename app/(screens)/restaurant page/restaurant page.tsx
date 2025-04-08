@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import InfoIcon from './InfoIcon';
+import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
 
 export default function CafeScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [restaurantName, setRestaurantName] = useState('Loading...');
+  const [menuDescription, setMenuDescription] = useState('');
   const [sections, setSections] = useState<
-      { title: string; data: { id: number; name: string; price: number }[] }[]
+      { title: string; data: {
+          description: string;
+          id: number;
+          name: string;
+          price: number;
+          sectionName: string;
+
+        }[] }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,39 +28,32 @@ export default function CafeScreen() {
       try {
         setIsLoading(true);
 
-        const restaurant = await fetch(
-            `http://130.225.170.52:10331/api/restaurants/${id}`
-        ).then((res) => res.json());
+        const restaurant = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then(res => res.json());
         setRestaurantName(restaurant[0]?.name || 'Unknown');
         setRestaurantId(Number(id));
 
-        const menus = await fetch(
-            `http://130.225.170.52:10331/api/menus/restaurant/${id}`
-        ).then((res) => res.json());
+        const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then(res => res.json());
+        setMenuDescription(menus[0]?.description || 'No description available');
 
         const menuSectionsPromises = menus.map((menu: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then((res) =>
-                res.json()
-            )
+            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then(res => res.json())
         );
         const menuSections = await Promise.all(menuSectionsPromises);
 
-        const menuItemsPromises = menuSections
-            .flat()
-            .map((section: { id: number }) =>
-                fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then((res) =>
-                    res.json()
-                )
-            );
+        const menuItemsPromises = menuSections.flat().map((section: { id: number }) =>
+            fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
+        );
         const menuItems = await Promise.all(menuItemsPromises);
 
         const sectionData = menuSections.flat().map(
             (section: { id: number; name: string }, index: number) => {
               const items = menuItems[index].map(
-                  (item: { id: number; name: string; price: number }) => ({
+                  (item: { id: number; name: string; price: number; description: string }) => ({
                     id: item.id,
                     name: item.name || 'Unknown',
                     price: item.price || 0,
+                    sectionName: section.name,
+                    description: item.description || 'No description available',
                   })
               );
 
@@ -80,10 +81,18 @@ export default function CafeScreen() {
         <View style={styles.headerBox}>
           <Text style={styles.headerText}>{restaurantName}</Text>
 
-          {/* Info and Cart buttons */}
           <View style={styles.headerActions}>
             <TouchableOpacity
-                onPress={() => router.push('/restaurant info/restaurant info')}
+                onPress={() =>
+                    router.push({
+                      pathname: '/restaurant info/restaurant info',
+                      params: {
+                        id: id,
+                        name: restaurantName,
+                        description: menuDescription,
+                      },
+                    })
+                }
                 style={styles.iconContainer}
             >
               <InfoIcon />
@@ -115,14 +124,30 @@ export default function CafeScreen() {
 
                           return (
                               <View key={menuItem.id} style={styles.menuItem}>
-                                <View>
+                                <View style={{ flex: 1 }}>
                                   <Text style={styles.menuText}>{menuItem.name}</Text>
                                   <Text style={styles.priceText}>{menuItem.price} DKK</Text>
                                 </View>
 
-                                <View style={styles.actionBox}>
+                                <View style={styles.infoAndActionsRow}>
+                                  <TouchableOpacity
+                                      onPress={() =>
+                                          router.push({
+                                            pathname: '/item info/item info',
+                                            params: {
+                                              itemID: menuItem.id,
+                                              itemName: menuItem.name,
+                                              sectionName: menuItem.sectionName,
+                                              description: menuItem.description,
+                                            },
+                                          })
+                                      }
+                                  >
+                                    <InfoIcon />
+                                  </TouchableOpacity>
+
                                   {quantity > 0 ? (
-                                      <>
+                                      <View style={styles.actionBox}>
                                         <TouchableOpacity
                                             onPress={() => decreaseQuantity(menuItem.id)}
                                             style={styles.qtyButton}
@@ -136,7 +161,7 @@ export default function CafeScreen() {
                                         >
                                           <Text style={styles.qtyButtonText}>+</Text>
                                         </TouchableOpacity>
-                                      </>
+                                      </View>
                                   ) : (
                                       <TouchableOpacity
                                           onPress={() => addToCart(menuItem)}
@@ -161,7 +186,7 @@ export default function CafeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'Colors.background',
+    backgroundColor: '#f5f5f5',
   },
   headerBox: {
     width: '100%',
@@ -225,6 +250,11 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  infoAndActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   addButton: {
     backgroundColor: '#4CAF50',
