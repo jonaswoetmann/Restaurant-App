@@ -58,10 +58,8 @@ export default function HomeScreen() {
     const handleScroll = (event: any) => {
         const currentY = event.nativeEvent.contentOffset.y;
         const scrollingDown = currentY > prevScrollY.current;
-        const scrollingUp = currentY < prevScrollY.current;
 
         const collapseThreshold = 120;
-        const expandThreshold = 1;
 
         if (scrollingDown && !isCollapsed.current && currentY > collapseThreshold) {
             isCollapsed.current = true;
@@ -71,7 +69,12 @@ export default function HomeScreen() {
                 useNativeDriver: false,
             }).start();
         }
-        if (scrollingUp && isCollapsed.current && currentY < expandThreshold) {
+
+        prevScrollY.current = currentY;
+    };
+
+    const handleMapPress = () => {
+        if (isCollapsed.current) {
             isCollapsed.current = false;
             Animated.timing(mapAnimatedHeight, {
                 toValue: 350,
@@ -79,10 +82,7 @@ export default function HomeScreen() {
                 useNativeDriver: false,
             }).start();
         }
-
-        prevScrollY.current = currentY;
     };
-
 
     return (
         <KeyboardAvoidingView
@@ -110,9 +110,11 @@ export default function HomeScreen() {
 
                     {!searching && (
                         <>
-                            <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
-                                <Maps />
-                            </Animated.View>
+                            <TouchableWithoutFeedback onPress={handleMapPress}>
+                                <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
+                                    <Maps />
+                                </Animated.View>
+                            </TouchableWithoutFeedback>
                             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
