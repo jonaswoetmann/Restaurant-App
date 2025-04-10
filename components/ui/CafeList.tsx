@@ -24,7 +24,7 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY, onScroll }) 
         data={cafes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Button title={item.name} onPress={() => router.push(item.route)} />
+          <Button title={item.name} onPress={() => router.push(item.route as any)} />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         onScroll={Animated.event(
