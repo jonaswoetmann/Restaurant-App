@@ -54,7 +54,7 @@ export default function HomeScreen() {
             setFilteredCafes(filtered);
         }
         setSearching(lowercasedQuery.length > 0);
-    }), [searchQuery, cafes]
+    }, [searchQuery, cafes]);
 
     const handleScroll = (event: any) => {
         const currentY = event.nativeEvent.contentOffset.y;
