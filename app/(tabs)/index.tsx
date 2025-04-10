@@ -14,6 +14,7 @@ export default function HomeScreen() {
     const [searching, setSearching] = useState(false);
     const scrollY = useRef(new Animated.Value(0)).current;
     const mapAnimatedHeight = useRef(new Animated.Value(350)).current;
+    const mapHeightRef = useRef(350);
     const prevScrollY = useRef(0);
     const isCollapsed = useRef(false);
 
@@ -61,6 +62,27 @@ export default function HomeScreen() {
 
         const collapseThreshold = 120;
 
+        if (!isCollapsed.current && currentY <= collapseThreshold) {
+            const newHeight = 350 - currentY;
+
+            // Prevent jumpiness when scrolling back up after re-expanding map
+            if (mapHeightRef.current === 350 && currentY < prevScrollY.current) {
+                prevScrollY.current = currentY;
+                return;
+            }
+
+            Animated.timing(mapAnimatedHeight, {
+                toValue: newHeight,
+                duration: 30,
+                useNativeDriver: false,
+            }).start();
+            mapHeightRef.current = newHeight;
+
+            event.target.scrollToOffset?.({ offset: 0, animated: false });
+            prevScrollY.current = currentY;
+            return;
+        }
+
         if (scrollingDown && !isCollapsed.current && currentY > collapseThreshold) {
             isCollapsed.current = true;
             Animated.timing(mapAnimatedHeight, {
@@ -68,6 +90,7 @@ export default function HomeScreen() {
                 duration: 100,
                 useNativeDriver: false,
             }).start();
+            mapHeightRef.current = 100;
         }
 
         prevScrollY.current = currentY;
@@ -81,6 +104,7 @@ export default function HomeScreen() {
                 duration: 100,
                 useNativeDriver: false,
             }).start();
+            mapHeightRef.current = 350;
         }
     };
 
