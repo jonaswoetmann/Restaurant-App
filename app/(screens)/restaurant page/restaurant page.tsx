@@ -7,48 +7,74 @@ import { useCart } from '../cart/CartContext';
 export default function CafeScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const [restaurantName, setRestaurantName] = useState('Loading...');
+  const [restaurant, setRestaurant] = useState<any>(null);
   const [menuDescription, setMenuDescription] = useState('');
   const [sections, setSections] = useState<
-      { title: string; data: {
+      {
+        title: string;
+        data: {
           description: string;
           id: number;
           name: string;
           price: number;
           sectionName: string;
-
-        }[] }[]
+        }[];
+      }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { cart, addToCart, increaseQuantity, decreaseQuantity, setRestaurantId} = useCart();
+  const {
+    cart,
+    addToCart,
+    increaseQuantity,
+    decreaseQuantity,
+    setRestaurantId,
+  } = useCart();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
 
-        const restaurant = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then(res => res.json());
-        setRestaurantName(restaurant[0]?.name || 'Unknown');
+        const restaurantData = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then((res) =>
+            res.json()
+        );
+
+        const restaurantInfo = restaurantData[0];
+        setRestaurant(restaurantInfo);
         setRestaurantId(Number(id));
 
-        const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then(res => res.json());
+        const menus = await fetch(
+            `http://130.225.170.52:10331/api/menus/restaurant/${id}`
+        ).then((res) => res.json());
+
         setMenuDescription(menus[0]?.description || 'No description available');
 
         const menuSectionsPromises = menus.map((menu: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then(res => res.json())
+            fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then((res) =>
+                res.json()
+            )
         );
         const menuSections = await Promise.all(menuSectionsPromises);
 
-        const menuItemsPromises = menuSections.flat().map((section: { id: number }) =>
-            fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
-        );
+        const menuItemsPromises = menuSections
+            .flat()
+            .map((section: { id: number }) =>
+                fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then((res) =>
+                    res.json()
+                )
+            );
         const menuItems = await Promise.all(menuItemsPromises);
 
         const sectionData = menuSections.flat().map(
             (section: { id: number; name: string }, index: number) => {
               const items = menuItems[index].map(
-                  (item: { id: number; name: string; price: number; description: string }) => ({
+                  (item: {
+                    id: number;
+                    name: string;
+                    price: number;
+                    description: string;
+                  }) => ({
                     id: item.id,
                     name: item.name || 'Unknown',
                     price: item.price || 0,
@@ -79,7 +105,7 @@ export default function CafeScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.headerBox}>
-          <Text style={styles.headerText}>{restaurantName}</Text>
+          <Text style={styles.headerText}>{restaurant?.name || 'Loading...'}</Text>
 
           <View style={styles.headerActions}>
             <TouchableOpacity
@@ -88,8 +114,10 @@ export default function CafeScreen() {
                       pathname: '/restaurant info/restaurant info',
                       params: {
                         id: id,
-                        name: restaurantName,
+                        name: restaurant?.name,
                         description: menuDescription,
+                        latitude: restaurant?.latitude?.toString() || '0',
+                        longitude: restaurant?.longitude?.toString() || '0',
                       },
                     })
                 }
