@@ -1,8 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
+
+let theme = {
+    name: 'Standard',
+    colors: {
+        primary: '#FFFFFF',
+        background: '#F5F5F5',
+        text: '#000000',
+        text2: '#FFFFFF',
+        secondary: '#f4845f',
+        accent1: '#4CAF50',
+        accent2: '#FFDD99',
+    },
+}
 
 export default function CafeScreen() {
   const router = useRouter();
@@ -23,6 +36,8 @@ export default function CafeScreen() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [themeState, setTheme] = useState(theme);
+
   const {
     cart,
     addToCart,
@@ -30,6 +45,8 @@ export default function CafeScreen() {
     decreaseQuantity,
     setRestaurantId,
   } = useCart();
+
+  const styles = useMemo(() => createStyles(themeState), [themeState]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +60,27 @@ export default function CafeScreen() {
         const restaurantInfo = restaurantData[0];
         setRestaurant(restaurantInfo);
         setRestaurantId(Number(id));
+
+        if (restaurantInfo.theme !== "Standard"){
+            console.log(restaurantInfo.theme)
+            const themedata = await fetch(`http://130.225.170.52:10331/api/restaurants/theme/${restaurantInfo.theme}`).then((res) => 
+                res.json()
+            );
+            console.log(themedata)
+            const newTheme = {
+             name: restaurantInfo.theme,
+             colors: {
+                primary: themedata.primarycolor,
+                background: themedata.background,
+                text: themedata.text,
+                text2: themedata.text2,
+                secondary: themedata.secondary,
+                accent1: themedata.accent1,
+                accent2: themedata.accent2,
+                }
+            }
+            setTheme(newTheme)
+        }
 
         const menus = await fetch(
             `http://130.225.170.52:10331/api/menus/restaurant/${id}`
@@ -211,16 +249,17 @@ export default function CafeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: typeof defaultTheme) =>
+StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background,
   },
   headerBox: {
     width: '100%',
     height: 150,
     padding: 16,
-    backgroundColor: '#ffdd99',
+    backgroundColor: theme.colors.secondary,
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -230,7 +269,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.colors.text,
   },
   headerActions: {
     flexDirection: 'row',
@@ -247,7 +286,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   cartText: {
-    color: 'white',
+    color: theme.colors.text2,
     fontWeight: 'bold',
   },
   menuContainer: {
@@ -263,7 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   menuItem: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.primary,
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
@@ -285,13 +324,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   addButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: theme.colors.accent1,
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
   },
   addButtonText: {
-    color: '#fff',
+    color: theme.colors.text2,
     fontWeight: 'bold',
   },
   actionBox: {
@@ -300,7 +339,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   qtyButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: theme.colors.secondary,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 4,
