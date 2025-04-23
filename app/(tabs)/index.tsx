@@ -141,7 +141,7 @@ export default function HomeScreen() {
                                     <Maps />
                                 </Animated.View>
                             </TouchableWithoutFeedback>
-                            <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
                                 ) : (
