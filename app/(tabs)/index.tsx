@@ -117,14 +117,16 @@ export default function HomeScreen() {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
                     <View style={styles.searchContainer}>
-                        <IconSymbol name="qrcode.viewfinder" color="White" size={20} />
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            placeholderTextColor="white"
-                        />
+                        <View style={styles.searchInputWrapper}>
+                            <IconSymbol name="qrcode.viewfinder" color="black" size={20} />
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder="Search Here"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                placeholderTextColor="black"
+                            />
+                        </View>
                     </View>
                     {searching && (
                         <View style={styles.overlay}>
@@ -164,13 +166,19 @@ const styles = StyleSheet.create({
         zIndex: 1,
         paddingTop: Constants.statusBarHeight,
     },
-    searchInput: {
-        marginLeft: 8,
+    searchInputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
         flex: 1,
         height: 40,
         backgroundColor: '#fff',
         borderRadius: 8,
         paddingHorizontal: 10,
+    },
+    searchInput: {
+        marginLeft: 8,
+        flex: 1,
+        height: '100%',
     },
     overlay: {
         position: 'absolute',
