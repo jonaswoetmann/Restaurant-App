@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
 import { Picker } from '@react-native-picker/picker';
+import * as WebBrowser from 'expo-web-browser'
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
@@ -13,7 +14,6 @@ export default function CartScreen() {
       alert('Your cart is empty. Please add items before placing an order.');
       return;
     }
-
     try {
       const orderPayload = {
         orderTable: parseInt(String(selectedTable)),
@@ -36,7 +36,32 @@ export default function CartScreen() {
         return;
       }
 
-      alert('Order placed successfully!');
+      const createOrder = await response.json();
+      const orderId = parseInt(createOrder.message.replace(/\D/g, ''), 10);
+
+      const tipAmount = 0;
+      const stripeResponse = await fetch(`http://130.225.170.52:10331/api/orders/${orderId}/create-payment-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tip: tipAmount }),
+      });
+
+      if (!stripeResponse.ok) {
+        console.error(`Payment session failed: ${stripeResponse.statusText}`);
+        alert('Failed to initiate payment.');
+        return;
+      }
+
+      const stripeData = await stripeResponse.json();
+      const url = stripeData.checkout_url;
+
+      if (!url) {
+        alert('Invalid URL');
+        return;
+      }
+
+      await WebBrowser.openBrowserAsync(url);
+
     } catch (error) {
       console.error(error);
       alert('An error occurred while placing the order.');
@@ -84,7 +109,7 @@ export default function CartScreen() {
                 <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
             ))}
           </Picker>
-          <OrderButton onPress={handleOrder} />
+          <OrderButton onPress={handleOrder}/>
         </View>
       </View>
   );
