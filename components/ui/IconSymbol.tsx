@@ -13,6 +13,7 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'person.crop.circle.fill': 'account-circle',
   'qrcode.viewfinder': 'qr-code-scanner',
+  'magnifyingglass': 'search',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
 } as Partial<

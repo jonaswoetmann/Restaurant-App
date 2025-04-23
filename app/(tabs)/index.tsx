@@ -118,7 +118,7 @@ export default function HomeScreen() {
                 <View style={{ flex: 1 }}>
                     <View style={styles.searchContainer}>
                         <View style={styles.searchInputWrapper}>
-                            <IconSymbol name="qrcode.viewfinder" color="black" size={20} />
+                            <IconSymbol name="magnifyingglass" color="black" size={20} />
                             <TextInput
                                 style={styles.searchInput}
                                 placeholder="Search Here"
