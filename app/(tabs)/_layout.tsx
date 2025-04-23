@@ -22,10 +22,19 @@ export default function TabLayout() {
               tabBarBackground: TabBarBackground,
               tabBarStyle: Platform.select({
                   ios: {
-                      // Use a transparent background on iOS to show the blur effect
                       position: 'absolute',
                   },
-                  default: {},
+                  default: {
+                      height: 70,
+                      borderTopLeftRadius: 20,
+                      borderTopRightRadius: 20,
+                      elevation: 10,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: -2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 6,
+                      position: 'absolute',
+                  },
               }),
           }}>
           <Tabs.Screen
@@ -59,7 +68,10 @@ const QRButton: React.FC<{ onPress: () => void }> = ({ onPress }) => {
 const styles = StyleSheet.create({
     qrButton: {
         position: 'absolute',
-        bottom: 20,
+        bottom: Platform.select({
+            ios: 20,
+            android: 10,
+        }),
         alignSelf: 'center',
         backgroundColor: 'transparent',
     },
