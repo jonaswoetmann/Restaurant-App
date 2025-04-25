@@ -21,12 +21,15 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
-    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     width: 320,
     height: 100,
+    textAlignVertical: 'center',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
+    textAlignVertical: 'center',
   },
 });
