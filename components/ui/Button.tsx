@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
     width: 320,
     height: 100,
     textAlignVertical: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   buttonText: {
     fontSize: 16,
