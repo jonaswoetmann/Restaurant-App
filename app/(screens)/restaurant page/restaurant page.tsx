@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
+import { MenuItem } from '../cart/CartContext';
 
 const defaultTheme = {
     name: 'Standard',
@@ -87,6 +88,7 @@ export default function CafeScreen() {
                         price: item.price || 0,
                         sectionName: section.name,
                         description: item.description || 'No description available',
+                        photoLink: item.photoLink,
                     }));
                     return {
                         title: section.name || `Section ${section.id}`,
@@ -167,6 +169,7 @@ export default function CafeScreen() {
                                                                 itemName: menuItem.name,
                                                                 sectionName: menuItem.sectionName,
                                                                 description: menuItem.description,
+                                                                photoLink: menuItem.photoLink,
                                                             },
                                                         })
                                                     }

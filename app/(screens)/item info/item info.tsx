@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function ItemInfoScreen() {
-  const { itemName, sectionName, description } = useLocalSearchParams();
+  const { itemName, sectionName, description, photoLink } = useLocalSearchParams();
 
   return (
       <ScrollView style={styles.container}>
@@ -13,7 +13,7 @@ export default function ItemInfoScreen() {
         ) : null}
 
         <Image
-            source={{ uri: 'https://via.placeholder.com/400x200' }}
+            source={{ uri: typeof photoLink === 'string' ? photoLink : 'https://via.placeholder.com/400x200' }}
             style={styles.mapImage}
         />
 
