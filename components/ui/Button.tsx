@@ -1,16 +1,23 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
 import {Colors} from '@/constants/Colors';
 
 type ButtonProps = {
   title: string;
   onPress: () => void;
+  centerText?: boolean;
+  rating?: number;
 };
 
-export const Button: React.FC<ButtonProps> = ({ title, onPress }) => {
+export const Button: React.FC<ButtonProps> = ({ title, onPress, centerText = false, rating }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
+      <View>
+        <Text style={[styles.buttonText, centerText && styles.centerText]}>{title}</Text>
+        {rating && (
+            <Text style={styles.rating}>{rating}</Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -22,7 +29,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     justifyContent: 'center',
-    alignItems: 'flex-start',
     width: 320,
     height: 100,
     textAlignVertical: 'center',
@@ -37,4 +43,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlignVertical: 'center',
   },
+  centerText: {
+    textAlign: 'center'
+  },
+  rating: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlignVertical: 'center',
+    textAlign: 'right',
+  }
 });

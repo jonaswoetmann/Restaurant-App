@@ -9,7 +9,7 @@ type OrderButtonProps = {
 export const OrderButton: React.FC<OrderButtonProps> = ({ onPress }) => {
   return (
       <View style={styles.container}>
-        <Button title="Order and Pay" onPress={onPress} />
+        <Button title="Order and Pay" onPress={onPress} centerText={true} />
       </View>
 
   );
@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 150,
     paddingBottom: 16,
+    paddingTop: 16,
     alignItems: 'center',
   },
 });
