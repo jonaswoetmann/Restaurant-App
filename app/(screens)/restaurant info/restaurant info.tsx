@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,13 +10,6 @@ export default function RestaurantInfoScreen() {
   const lat = parseFloat(latitude as string) || 0;
   const lon = parseFloat(longitude as string) || 0;
 
-  const [rating, setRating] = useState<number | null>(null);
-  const handleRatingChange = (value: string) => {
-    const parsedValue = parseInt (value, 10);
-    if (!isNaN(parsedValue) && parsedValue >= 1 && parsedValue <= 5) {
-      setRating(parsedValue);
-    }
-  }
 
   return (
       <ScrollView style={styles.container}>
@@ -58,19 +51,6 @@ export default function RestaurantInfoScreen() {
             <Text style={styles.sectionText}>Opening times</Text>
             <Text style={styles.descriptionText}>Monday - Sunday: 08:00 - 22:00</Text>
           </View>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionText}>Rate this Restaurant</Text>
-          <View style={{ flexDirection: 'row', marginTop: 8 }}>
-            {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                  <Text style={{ fontSize: 32, color: star <= (rating || 0) ? '#FFD700' : '#ccc' }}>
-                    ★
-                  </Text>
-                </TouchableOpacity>
-            ))}
-          </View>
-          <Text style={styles.ratingText}>Your Rating: {rating ? rating : 'Not Rated'}</Text>
         </View>
       </ScrollView>
   );
