@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
 import { Picker } from '@react-native-picker/picker';
@@ -8,6 +8,7 @@ import * as WebBrowser from 'expo-web-browser'
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
+  const [Comment, setComment] = React.useState('');
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -19,7 +20,8 @@ export default function CartScreen() {
         orderTable: parseInt(String(selectedTable)),
         restaurantId: restaurantId,
         userId: 1,
-        menuItems: cart.map(item => item.id)
+        menuItems: cart.map(item => item.id),
+        comment: Comment,
       };
 
       const response = await fetch('http://130.225.170.52:10331/api/orders/add', {
@@ -109,6 +111,14 @@ export default function CartScreen() {
                 <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
             ))}
           </Picker>
+          <Text style={styles.dropdownLabel}>Comments</Text>
+          <TextInput
+              style={styles.commentBox}
+              placeholder="Any special requests or comments?"
+              value={Comment}
+              onChangeText={setComment}
+              multiline
+          />
           <OrderButton onPress={handleOrder}/>
         </View>
       </View>
@@ -139,6 +149,16 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: '100%',
+    marginBottom: 150,
+  },
+  commentBox: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    height: 80,
+    marginBottom: 12,
+    textAlignVertical: 'top',
   },
   item: {
     padding: 12,

@@ -17,7 +17,7 @@ export const OrderButton: React.FC<OrderButtonProps> = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 150,
+    marginTop: 12,
     paddingBottom: 16,
     paddingTop: 16,
     alignItems: 'center',
