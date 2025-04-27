@@ -2,13 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
-import { Picker } from '@react-native-picker/picker';
+import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
   const [Comment, setComment] = React.useState('');
+  const [open, setOpen] = React.useState(false);
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -106,15 +107,19 @@ export default function CartScreen() {
         ListFooterComponent={
           <View style={styles.cartFooter}>
             <Text style={styles.dropdownLabel}>Select Table</Text>
-            <Picker
-              selectedValue={selectedTable}
-              onValueChange={(itemValue) => setSelectedTable(itemValue)}
-              style={styles.picker}
-            >
-              {Array.from({ length: 50 }, (_, i) => (
-                <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
-              ))}
-            </Picker>
+            <Dropdown
+                items={Array.from({ length: 5 }, (_, i) => ({
+                  label: `Table ${i + 1}`,
+                  value: (i + 1).toString(),
+                }))}
+                value={selectedTable.toString()}
+                containerStyle={styles.dropdownContainer}
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropDownList}
+                open={open}
+                setOpen={setOpen}
+                setValue={setSelectedTable}
+            />
             <Text style={styles.dropdownLabel}>Comments</Text>
             <TextInput
               style={styles.commentBox}
@@ -151,12 +156,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 6,
-    marginTop: 10,
+    marginTop: 20,
   },
-  picker: {
-    height: 50,
+  dropdownContainer: {
+    height: 40,
     width: '100%',
-    marginBottom: 150,
+  },
+  dropdown: {
+    backgroundColor: '#f8f8f8',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+  },
+  dropDownList: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    maxHeight: 300,
   },
   commentBox: {
     borderColor: '#ccc',
