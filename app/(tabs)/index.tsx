@@ -26,26 +26,45 @@ export default function HomeScreen() {
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
-                if (Math.abs(gestureState.dy) < 5) {
-                    handleBarPress();
-                    return;
-                }
-                let newHeight = mapHeightRef.current + gestureState.dy;
+                const { dy } = gestureState;
+                let newHeight = mapHeightRef.current + dy;
+
                 if (newHeight > 550) newHeight = 550;
                 if (newHeight < 20) newHeight = 20;
 
-                let snapPoint = 20;
-                if (newHeight > 150 && newHeight < 400) {
-                    snapPoint = 300;
-                } else if (newHeight > 400) {
-                    snapPoint = 550;
+                const SNAP_POINTS = [20, 300, 550];
+
+                let currentSnapIndex = 0;
+                let minDistance = Infinity;
+                SNAP_POINTS.forEach((point, index) => {
+                    const distance = Math.abs(newHeight - point);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        currentSnapIndex = index;
+                    }
+                });
+
+                let targetSnapIndex = currentSnapIndex;
+
+                if (Math.abs(dy) < 5) {
+                    handleBarPress();
+                    return;
                 }
+
+                if (dy < 0) {
+                    targetSnapIndex = Math.max(0, currentSnapIndex - 1);
+                } else if (dy > 0) {
+                    targetSnapIndex = Math.min(SNAP_POINTS.length - 1, currentSnapIndex + 1);
+                }
+
+                const snapPoint = SNAP_POINTS[targetSnapIndex];
 
                 Animated.timing(mapAnimatedHeight, {
                     toValue: snapPoint,
-                    duration: 150,
+                    duration: 200,
                     useNativeDriver: false,
                 }).start();
+
                 mapHeightRef.current = snapPoint;
             }
         })
