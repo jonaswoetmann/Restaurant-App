@@ -10,16 +10,29 @@ export default function Maps() {
     }
 
     const [myLocation, setMyLocation] = useState(initialLocation);
-    const [pin, setPin] = useState({})
+    const [restaurants, setRestaurants] = useState<{ id: string; name: string; latitude: number; longitude: number; }[]>([]);
     const mapRef = useRef<MapView>(null);
-    const local = {
-        latitude: "55.779655",
-        longitude: "12.521401",
-    }
+
     useEffect(() => {
-        setPin(local)
         _getLocation();
-    }, [])
+        _fetchRestaurants();
+    }, []);
+
+    const _fetchRestaurants = async () => {
+        try {
+            const response = await fetch('http://130.225.170.52:10331/api/restaurants');
+            const data = await response.json();
+            const mappedRestaurants = data.map((item: any) => ({
+                id: item.id.toString(),
+                name: item.name,
+                latitude: parseFloat(item.latitude),
+                longitude: parseFloat(item.longitude),
+            }));
+            setRestaurants(mappedRestaurants);
+        } catch (error) {
+            console.warn('Error fetching restaurants:', error);
+        }
+    };
 
     const _getLocation =async() => {
         try{
@@ -81,6 +94,21 @@ export default function Maps() {
                     title={'Your Location'}
                     />
                 }
+
+                {restaurants.map((restaurant) => (
+                    <Marker
+                        key={restaurant.id}
+                        coordinate={{
+                            latitude: restaurant.latitude,
+                            longitude: restaurant.longitude,
+                        }}
+                        title={restaurant.name}
+                        onPress={() => {
+
+
+                        }}
+                    />
+                ))}
 
             </MapView>
             <View style={styles.locationContainer}>

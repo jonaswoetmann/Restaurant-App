@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -12,11 +12,40 @@ export default function HomeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [searching, setSearching] = useState(false);
-    const scrollY = useRef(new Animated.Value(0)).current;
     const mapAnimatedHeight = useRef(new Animated.Value(350)).current;
     const mapHeightRef = useRef(350);
-    const prevScrollY = useRef(0);
-    const isCollapsed = useRef(false);
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderMove: (_, gestureState) => {
+                let newHeight = mapHeightRef.current + gestureState.dy;
+                if (newHeight > 550) newHeight = 550;
+                if (newHeight < 20) newHeight = 20;
+                mapAnimatedHeight.setValue(newHeight);
+            },
+            onPanResponderRelease: (_, gestureState) => {
+                let newHeight = mapHeightRef.current + gestureState.dy;
+                if (newHeight > 550) newHeight = 550;
+                if (newHeight < 20) newHeight = 20;
+
+                let snapPoint = 20;
+                if (newHeight > 150 && newHeight < 400) {
+                    snapPoint = 300;
+                } else if (newHeight > 400) {
+                    snapPoint = 550;
+                }
+
+                Animated.timing(mapAnimatedHeight, {
+                    toValue: snapPoint,
+                    duration: 150,
+                    useNativeDriver: false,
+                }).start();
+                mapHeightRef.current = snapPoint;
+            }
+        })
+    ).current;
 
     useEffect(() => {
         const fetchCafes = async () => {
@@ -56,58 +85,6 @@ export default function HomeScreen() {
         setSearching(lowercasedQuery.length > 0);
     }, [searchQuery, cafes]);
 
-    const handleScroll = (event: any) => {
-        const currentY = event.nativeEvent.contentOffset.y;
-        const scrollingDown = currentY > prevScrollY.current;
-
-        const collapseThreshold = 120;
-
-        if (!isCollapsed.current && currentY <= collapseThreshold) {
-            const newHeight = 350 - currentY;
-
-            // Prevent jumpiness when scrolling back up after re-expanding map
-            if (mapHeightRef.current === 350 && currentY < prevScrollY.current) {
-                prevScrollY.current = currentY;
-                return;
-            }
-
-            Animated.timing(mapAnimatedHeight, {
-                toValue: newHeight,
-                duration: 30,
-                useNativeDriver: false,
-            }).start();
-            mapHeightRef.current = newHeight;
-
-            event.target.scrollToOffset?.({ offset: 0, animated: false });
-            prevScrollY.current = currentY;
-            return;
-        }
-
-        if (scrollingDown && !isCollapsed.current && currentY > collapseThreshold) {
-            isCollapsed.current = true;
-            Animated.timing(mapAnimatedHeight, {
-                toValue: 100,
-                duration: 100,
-                useNativeDriver: false,
-            }).start();
-            mapHeightRef.current = 100;
-        }
-
-        prevScrollY.current = currentY;
-    };
-
-    const handleMapPress = () => {
-        if (isCollapsed.current) {
-            isCollapsed.current = false;
-            Animated.timing(mapAnimatedHeight, {
-                toValue: 350,
-                duration: 100,
-                useNativeDriver: false,
-            }).start();
-            mapHeightRef.current = 350;
-        }
-    };
-
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -130,22 +107,34 @@ export default function HomeScreen() {
                     </View>
                     {searching && (
                         <View style={styles.overlay}>
-                            <CafeList cafes={filteredCafes} scrollY={scrollY} onScroll={handleScroll} />
+                            <CafeList cafes={filteredCafes} />
                         </View>
                     )}
 
                     {!searching && (
                         <>
-                            <TouchableWithoutFeedback onPress={handleMapPress}>
-                                <Animated.View style={{ height: mapAnimatedHeight, overflow: 'hidden' }}>
-                                    <Maps />
-                                </Animated.View>
-                            </TouchableWithoutFeedback>
+                            <Animated.View
+                                style={[{ height: mapAnimatedHeight, overflow: 'hidden' }]}
+                            >
+                                <Maps />
+                            </Animated.View>
+                            <View
+                                {...panResponder.panHandlers}
+                                style={{
+                                    height: 30,
+                                    backgroundColor: '#ccc',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                }}
+                            >
+                                <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
+                            </View>
                             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
                                 ) : (
-                                    <CafeList cafes={filteredCafes} scrollY={scrollY} onScroll={handleScroll} />
+                                    <CafeList cafes={filteredCafes} />
                                 )}
                             </ThemedView>
                         </>
@@ -187,7 +176,6 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         zIndex: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
+        backgroundColor: 'white',
+    },
 });

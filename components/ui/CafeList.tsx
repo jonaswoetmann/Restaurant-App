@@ -7,13 +7,13 @@ type Cafe = {
   id: string;
   name: string;
   route: string;
-  averageRating: number;
+  averageRating?: number;
 };
 
 type CafeListProps = {
   cafes: Cafe[];
-  scrollY: Animated.Value;
-  onScroll: (event: any) => void;
+  scrollY?: Animated.Value;
+  onScroll?: (event: any) => void;
 };
 
 export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY, onScroll }) => {
@@ -28,11 +28,15 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY, onScroll }) 
           <Button title={item.name} rating={item.averageRating} onPress={() => router.push(item.route as any)} />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-        onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false, listener: onScroll }
-        )}
-        scrollEventThrottle={1}
+        onScroll={
+          scrollY
+            ? Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: false, listener: onScroll }
+              )
+            : undefined
+        }
+        scrollEventThrottle={scrollY ? 1 : undefined}
       />
     </View>
   );
