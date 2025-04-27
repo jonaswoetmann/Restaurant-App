@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'r
 import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
 import { Picker } from '@react-native-picker/picker';
-import * as WebBrowser from 'expo-web-browser'
+import * as WebBrowser from 'expo-web-browser';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
@@ -71,59 +71,63 @@ export default function CartScreen() {
   };
 
   return (
-      <FlatList>
-        <View style={styles.screenContainer}>
-          <View style={styles.cartContainer}>
+    <View style={styles.screenContainer}>
+      <FlatList
+        data={cart}
+        keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={
+          <View style={styles.cartHeader}>
             <Text style={styles.text}>Your Cart</Text>
-            <FlatList
-                data={cart}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={<Text>Your cart is empty.</Text>}
-                renderItem={({ item }) => (
-                    <View style={styles.item}>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.price}>{item.price} DKK</Text>
+          </View>
+        }
+        ListEmptyComponent={<Text>Your cart is empty.</Text>}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.price}>{item.price} DKK</Text>
 
-                      <View style={styles.controls}>
-                        <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
-                          <Text style={styles.qtyButtonText}>-</Text>
-                        </TouchableOpacity>
+            <View style={styles.controls}>
+              <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
+                <Text style={styles.qtyButtonText}>-</Text>
+              </TouchableOpacity>
 
-                        <Text style={styles.quantity}>{item.quantity}</Text>
+              <Text style={styles.quantity}>{item.quantity}</Text>
 
-                        <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
-                          <Text style={styles.qtyButtonText}>+</Text>
-                        </TouchableOpacity>
+              <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
+                <Text style={styles.qtyButtonText}>+</Text>
+              </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                          <Text style={styles.remove}>Remove</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                )}
-            />
+              <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                <Text style={styles.remove}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        ListFooterComponent={
+          <View style={styles.cartFooter}>
             <Text style={styles.dropdownLabel}>Select Table</Text>
             <Picker
-                selectedValue={selectedTable}
-                onValueChange={(itemValue) => setSelectedTable(itemValue)}
-                style={styles.picker}
+              selectedValue={selectedTable}
+              onValueChange={(itemValue) => setSelectedTable(itemValue)}
+              style={styles.picker}
             >
               {Array.from({ length: 50 }, (_, i) => (
-                  <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
+                <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
               ))}
             </Picker>
             <Text style={styles.dropdownLabel}>Comments</Text>
             <TextInput
-                style={styles.commentBox}
-                placeholder="Any special requests or comments?"
-                value={Comment}
-                onChangeText={setComment}
-                multiline
+              style={styles.commentBox}
+              placeholder="Any special requests or comments?"
+              value={Comment}
+              onChangeText={setComment}
+              multiline
             />
-            <OrderButton onPress={handleOrder}/>
+            <OrderButton onPress={handleOrder} />
           </View>
-        </View>
-      </FlatList>
+        }
+      />
+    </View>
   );
 }
 
@@ -132,10 +136,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  cartContainer: {
-    paddingTop: 40,
+  cartHeader: {
+    paddingTop: 20,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
+    paddingBottom: 20,
+    backgroundColor: '#fff'
   },
   text: {
     fontSize: 20,
@@ -201,5 +206,10 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     color: 'red',
     fontSize: 14,
+  },
+  cartFooter: {
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    backgroundColor: '#fff',
   },
 });
