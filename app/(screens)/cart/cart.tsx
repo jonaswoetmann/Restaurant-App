@@ -71,57 +71,59 @@ export default function CartScreen() {
   };
 
   return (
-      <View style={styles.screenContainer}>
-        <View style={styles.cartContainer}>
-          <Text style={styles.text}>Your Cart</Text>
-          <FlatList
-              data={cart}
-              keyExtractor={(item) => item.id.toString()}
-              ListEmptyComponent={<Text>Your cart is empty.</Text>}
-              renderItem={({ item }) => (
-                  <View style={styles.item}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.price}>{item.price} DKK</Text>
+      <FlatList>
+        <View style={styles.screenContainer}>
+          <View style={styles.cartContainer}>
+            <Text style={styles.text}>Your Cart</Text>
+            <FlatList
+                data={cart}
+                keyExtractor={(item) => item.id.toString()}
+                ListEmptyComponent={<Text>Your cart is empty.</Text>}
+                renderItem={({ item }) => (
+                    <View style={styles.item}>
+                      <Text style={styles.name}>{item.name}</Text>
+                      <Text style={styles.price}>{item.price} DKK</Text>
 
-                    <View style={styles.controls}>
-                      <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
-                        <Text style={styles.qtyButtonText}>-</Text>
-                      </TouchableOpacity>
+                      <View style={styles.controls}>
+                        <TouchableOpacity onPress={() => decreaseQuantity(item.id)} style={styles.qtyButton}>
+                          <Text style={styles.qtyButtonText}>-</Text>
+                        </TouchableOpacity>
 
-                      <Text style={styles.quantity}>{item.quantity}</Text>
+                        <Text style={styles.quantity}>{item.quantity}</Text>
 
-                      <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
-                        <Text style={styles.qtyButtonText}>+</Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity onPress={() => increaseQuantity(item.id)} style={styles.qtyButton}>
+                          <Text style={styles.qtyButtonText}>+</Text>
+                        </TouchableOpacity>
 
-                      <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                        <Text style={styles.remove}>Remove</Text>
-                      </TouchableOpacity>
+                        <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                          <Text style={styles.remove}>Remove</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-              )}
-          />
-          <Text style={styles.dropdownLabel}>Select Table</Text>
-          <Picker
-              selectedValue={selectedTable}
-              onValueChange={(itemValue) => setSelectedTable(itemValue)}
-              style={styles.picker}
-          >
-            {Array.from({ length: 50 }, (_, i) => (
-                <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
-            ))}
-          </Picker>
-          <Text style={styles.dropdownLabel}>Comments</Text>
-          <TextInput
-              style={styles.commentBox}
-              placeholder="Any special requests or comments?"
-              value={Comment}
-              onChangeText={setComment}
-              multiline
-          />
-          <OrderButton onPress={handleOrder}/>
+                )}
+            />
+            <Text style={styles.dropdownLabel}>Select Table</Text>
+            <Picker
+                selectedValue={selectedTable}
+                onValueChange={(itemValue) => setSelectedTable(itemValue)}
+                style={styles.picker}
+            >
+              {Array.from({ length: 50 }, (_, i) => (
+                  <Picker.Item key={i + 1} label={`Table ${i + 1}`} value={(i + 1).toString()} />
+              ))}
+            </Picker>
+            <Text style={styles.dropdownLabel}>Comments</Text>
+            <TextInput
+                style={styles.commentBox}
+                placeholder="Any special requests or comments?"
+                value={Comment}
+                onChangeText={setComment}
+                multiline
+            />
+            <OrderButton onPress={handleOrder}/>
+          </View>
         </View>
-      </View>
+      </FlatList>
   );
 }
 
