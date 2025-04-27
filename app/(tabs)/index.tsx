@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -26,6 +26,10 @@ export default function HomeScreen() {
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
+                if (Math.abs(gestureState.dy) < 5) {
+                    handleBarPress();
+                    return;
+                }
                 let newHeight = mapHeightRef.current + gestureState.dy;
                 if (newHeight > 550) newHeight = 550;
                 if (newHeight < 20) newHeight = 20;
@@ -46,6 +50,24 @@ export default function HomeScreen() {
             }
         })
     ).current;
+
+    const handleBarPress = () => {
+        let nextSnapPoint = 20;
+        if (mapHeightRef.current === 20) {
+            nextSnapPoint = 300;
+        } else if (mapHeightRef.current === 300) {
+            nextSnapPoint = 20;
+        } else {
+            nextSnapPoint = 300;
+        }
+
+        Animated.timing(mapAnimatedHeight, {
+            toValue: nextSnapPoint,
+            duration: 200,
+            useNativeDriver: false,
+        }).start();
+        mapHeightRef.current = nextSnapPoint;
+    };
 
     useEffect(() => {
         const fetchCafes = async () => {
@@ -118,18 +140,20 @@ export default function HomeScreen() {
                             >
                                 <Maps />
                             </Animated.View>
-                            <View
+                            <Pressable onPress={handleBarPress}>
+                                <View
                                 {...panResponder.panHandlers}
-                                style={{
-                                    height: 30,
-                                    backgroundColor: '#ccc',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'relative',
-                                }}
-                            >
-                                <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
-                            </View>
+                                    style={{
+                                        height: 30,
+                                        backgroundColor: '#ccc',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'relative',
+                                    }}
+                                >
+                                    <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
+                                </View>
+                            </Pressable>
                             <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
