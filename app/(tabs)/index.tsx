@@ -5,6 +5,7 @@ import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Constants from "expo-constants";
+import { useMarker } from '@/components/MarkerContext';
 
 export default function HomeScreen() {
     const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
@@ -18,6 +19,8 @@ export default function HomeScreen() {
     const HighSnap = ScreenHeight * 0.02;
     const MidSnap = ScreenHeight * 0.4;
     const LowSnap = ScreenHeight * 0.75;
+
+    const { selectedMarkerId } = useMarker();
 
     const panResponder = useRef(
         PanResponder.create({
@@ -129,6 +132,21 @@ export default function HomeScreen() {
         }
         setSearching(lowercasedQuery.length > 0);
     }, [searchQuery, cafes]);
+
+useEffect(() => {
+  if (selectedMarkerId) {
+    const selectedCafe = cafes.find(cafe => cafe.id === selectedMarkerId);
+    if (selectedCafe) {
+      setFilteredCafes([selectedCafe]);
+    }
+  } else {
+    const lowercasedQuery = searchQuery.toLowerCase();
+    const filtered = cafes.filter((cafe) =>
+      cafe.name.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredCafes(filtered);
+  }
+}, [selectedMarkerId, cafes, searchQuery]);
 
     return (
         <KeyboardAvoidingView

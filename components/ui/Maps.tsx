@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Button, StyleSheet, View} from 'react-native';
 import * as Location from 'expo-location';
+import { useMarker } from '@/components/MarkerContext';
 
 export default function Maps() {
     const initialLocation = {
@@ -12,6 +13,7 @@ export default function Maps() {
     const [myLocation, setMyLocation] = useState(initialLocation);
     const [restaurants, setRestaurants] = useState<{ id: string; name: string; latitude: number; longitude: number; }[]>([]);
     const mapRef = useRef<MapView>(null);
+    const { setSelectedMarkerId } = useMarker();
 
     useEffect(() => {
         _getLocation();
@@ -83,6 +85,7 @@ export default function Maps() {
                     altitude: 3000,
                     zoom: 14,
                 }}
+                onPress={() => setSelectedMarkerId(null)}
             >
 
                 { myLocation.latitude && myLocation.longitude &&
@@ -104,8 +107,9 @@ export default function Maps() {
                         }}
                         title={restaurant.name}
                         onPress={() => {
-
-
+                            if (restaurant.id) {
+                                setSelectedMarkerId(restaurant.id);
+                            }
                         }}
                     />
                 ))}
