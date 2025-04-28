@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
@@ -148,13 +148,20 @@ export default function CafeScreen() {
                         renderItem={({ item }) => (
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>{item.title}</Text>
-                                {item.data.map((menuItem) => {
+                                {item.data.map((menuItem: { id: any; name: any; price: any; sectionName?: any; description?: any; photoLink?: any; }) => {
                                     const existing = cart.find((c) => c.id === menuItem.id);
                                     const quantity = existing?.quantity || 0;
 
                                     return (
                                         <View key={menuItem.id} style={styles.menuItem}>
                                             <View style={{ flex: 1 }}>
+                                                {menuItem.photoLink ? (
+                                                    <Image
+                                                        source={{ uri: menuItem.photoLink }}
+                                                        style={styles.menuItemImage}
+                                                        resizeMode="cover"
+                                                    />
+                                                ) : null}
                                                 <Text style={styles.menuText}>{menuItem.name}</Text>
                                                 <Text style={styles.priceText}>{menuItem.price} DKK</Text>
                                             </View>
@@ -275,6 +282,12 @@ const createStyles = (theme: typeof defaultTheme) =>
             justifyContent: 'space-between',
             alignItems: 'center',
             elevation: 2,
+        },
+        menuItemImage: {
+            width: '100%',
+            height: 150,
+            borderRadius: 8,
+            marginBottom: 8,
         },
         menuText: {
             fontSize: 16,
