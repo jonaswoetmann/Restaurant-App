@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         position: 'absolute',
-        top: 100,
+        top: Dimensions.get('window').height * 0.12,
         left: 0,
         right: 0,
         bottom: 0,
