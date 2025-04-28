@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
@@ -152,6 +152,31 @@ export default function RestaurantInfoScreen() {
                 style={[styles.input, { height: 80 }]}
             />
             <Button title={submitting ? 'Submitting...' : 'Submit'} onPress={submitRating} disabled={submitting} />
+            <TouchableOpacity
+                style={{ marginTop: 12 }}
+                onPress={() => {
+                    Alert.alert(
+                        'Report Restaurant',
+                        'Do you want to report this restaurant?',
+                        [
+                            { text: 'Cancel', style: 'cancel' },
+                            {
+                                text: 'Yes',
+                                onPress: () => {
+                                    const subject = encodeURIComponent(`Report for Restaurant: ${name}`);
+                                    const body = encodeURIComponent('Please describe the issue you encountered.');
+                                    const email = 'support@example.com'; // replace with your real support email
+                                    Linking.openURL(`mailto:${email}?subject=${subject}&body=${body}`);
+                                },
+                            },
+                        ]
+                    );
+                }}
+            >
+                <Text style={{ color: 'red', textAlign: 'center', textDecorationLine: 'underline' }}>
+                    Report Restaurant
+                </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
