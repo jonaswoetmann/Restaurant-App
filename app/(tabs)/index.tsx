@@ -177,7 +177,7 @@ export default function HomeScreen() {
                                     <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
                                 </View>
                             </Pressable>
-                            <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+                            <ThemedView colorName = 'page' style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
                                 ) : (
