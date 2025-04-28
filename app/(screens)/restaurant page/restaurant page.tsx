@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
-import { MenuItem } from '../cart/CartContext';
 
 const defaultTheme = {
     name: 'Standard',
