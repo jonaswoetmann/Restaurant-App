@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -12,8 +12,12 @@ export default function HomeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [searching, setSearching] = useState(false);
-    const mapAnimatedHeight = useRef(new Animated.Value(350)).current;
-    const mapHeightRef = useRef(350);
+    const mapAnimatedHeight = useRef(new Animated.Value(300)).current;
+    const mapHeightRef = useRef(300);
+    const ScreenHeight = Dimensions.get('window').height;
+    const HighSnap = ScreenHeight * 0.02;
+    const MidSnap = ScreenHeight * 0.4;
+    const LowSnap = ScreenHeight * 0.75;
 
     const panResponder = useRef(
         PanResponder.create({
@@ -21,18 +25,18 @@ export default function HomeScreen() {
             onMoveShouldSetPanResponder: () => true,
             onPanResponderMove: (_, gestureState) => {
                 let newHeight = mapHeightRef.current + gestureState.dy;
-                if (newHeight > 550) newHeight = 550;
-                if (newHeight < 20) newHeight = 20;
+                if (newHeight > LowSnap) newHeight = LowSnap;
+                if (newHeight < HighSnap) newHeight = HighSnap;
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
                 const { dy } = gestureState;
                 let newHeight = mapHeightRef.current + dy;
 
-                if (newHeight > 550) newHeight = 550;
-                if (newHeight < 20) newHeight = 20;
+                if (newHeight > LowSnap) newHeight = LowSnap;
+                if (newHeight < HighSnap) newHeight = HighSnap;
 
-                const SNAP_POINTS = [20, 300, 550];
+                const SNAP_POINTS = [HighSnap, MidSnap, LowSnap];
 
                 let currentSnapIndex = 0;
                 let minDistance = Infinity;
@@ -72,12 +76,12 @@ export default function HomeScreen() {
 
     const handleBarPress = () => {
         let nextSnapPoint = 20;
-        if (mapHeightRef.current === 20) {
-            nextSnapPoint = 300;
-        } else if (mapHeightRef.current === 300) {
-            nextSnapPoint = 20;
+        if (mapHeightRef.current === HighSnap) {
+            nextSnapPoint = MidSnap;
+        } else if (mapHeightRef.current === MidSnap) {
+            nextSnapPoint = HighSnap;
         } else {
-            nextSnapPoint = 300;
+            nextSnapPoint = MidSnap;
         }
 
         Animated.timing(mapAnimatedHeight, {
