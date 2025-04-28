@@ -7,7 +7,6 @@ type Cafe = {
   id: string;
   name: string;
   route: string;
-  averageRating?: number;
 };
 
 type CafeListProps = {
@@ -25,7 +24,7 @@ export const CafeList: React.FC<CafeListProps> = ({ cafes, scrollY, onScroll }) 
         data={cafes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Button title={item.name} rating={item.averageRating} onPress={() => router.push(item.route as any)} />
+          <Button title={item.name} showRating={true} onPress={() => router.push(item.route as any)} />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         onScroll={

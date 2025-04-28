@@ -6,17 +6,15 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   centerText?: boolean;
-  rating?: number;
+  showRating?: boolean;
 };
 
-export const Button: React.FC<ButtonProps> = ({ title, onPress, centerText = false, rating }) => {
+export const Button: React.FC<ButtonProps> = ({ title, onPress, centerText = false, showRating = false }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <View>
+      <View style={[showRating ? styles.row : undefined]}>
         <Text style={[styles.buttonText, centerText && styles.centerText]}>{title}</Text>
-        {rating && (
-            <Text style={styles.rating}>{rating}</Text>
-        )}
+        {showRating && <Text style={styles.rating}>5 ★</Text>}
       </View>
     </TouchableOpacity>
   );
@@ -51,5 +49,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlignVertical: 'center',
     textAlign: 'right',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   }
 });
