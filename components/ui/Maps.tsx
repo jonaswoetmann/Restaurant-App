@@ -5,8 +5,8 @@ import * as Location from 'expo-location';
 
 export default function Maps() {
     const initialLocation = {
-        latitude: 55.779655,
-        longitude: 12.521401,
+        latitude: 55.785821,
+        longitude: 12.521153,
     }
 
     const [myLocation, setMyLocation] = useState(initialLocation);
@@ -59,7 +59,7 @@ export default function Maps() {
                },
                pitch: 0,
                heading: 0,
-               altitude: 500,
+               altitude: 2000,
                zoom: 14,
            }
            if(mapRef.current){
@@ -80,7 +80,7 @@ export default function Maps() {
                     },
                     pitch: 0,
                     heading: 0,
-                    altitude: 500,
+                    altitude: 3000,
                     zoom: 14,
                 }}
             >
