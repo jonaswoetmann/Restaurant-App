@@ -27,13 +27,7 @@ export default function ItemInfoScreen() {
             <Text style={styles.sectionText}>Allergens</Text>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionText}>Næringsindhold</Text>
-          </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionText}>Calories</Text>
-          </View>
         </View>
       </ScrollView>
   );
