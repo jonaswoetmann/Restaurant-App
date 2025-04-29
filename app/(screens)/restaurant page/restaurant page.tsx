@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
+import { Image } from 'expo-image';
 
 const defaultTheme = {
     name: 'Standard',
@@ -48,7 +49,7 @@ export default function CafeScreen() {
                 setRestaurant(restaurantInfo);
 
                 if (restaurantId !== Number(id)) {
-                    clearCart(); // Ryd kurven hvis vi skifter restaurant
+                    clearCart();
                     setRestaurantId(Number(id));
                 }
 
@@ -79,7 +80,6 @@ export default function CafeScreen() {
                 const menuItems = await Promise.all(menuSections.flat().map((section: any) =>
                     fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
                 ));
-
                 const sectionData = menuSections.flat().map((section: any, index: number) => {
                     const items = menuItems[index].map((item: any) => ({
                         id: item.id,
@@ -87,7 +87,7 @@ export default function CafeScreen() {
                         price: item.price || 0,
                         sectionName: section.name,
                         description: item.description || 'No description available',
-                        photoLink: item.photoLink,
+                        photoLink: item.photolink || 'https://jamnawmenu.blob.core.windows.net/menu-items/Green%20Salad1',
                     }));
                     return {
                         title: section.name || `Section ${section.id}`,
@@ -150,17 +150,13 @@ export default function CafeScreen() {
                                 {item.data.map((menuItem: { id: any; name: any; price: any; sectionName?: any; description?: any; photoLink?: any; }) => {
                                     const existing = cart.find((c) => c.id === menuItem.id);
                                     const quantity = existing?.quantity || 0;
-
                                     return (
                                         <View key={menuItem.id} style={styles.menuItem}>
                                             <View style={{ flex: 1 }}>
-                                                {menuItem.photoLink ? (
                                                     <Image
-                                                        source={{ uri: menuItem.photoLink }}
+                                                        source={ menuItem.photoLink }
                                                         style={styles.menuItemImage}
-                                                        resizeMode="cover"
                                                     />
-                                                ) : null}
                                                 <Text style={styles.menuText}>{menuItem.name}</Text>
                                                 <Text style={styles.priceText}>{menuItem.price} DKK</Text>
                                             </View>
@@ -283,10 +279,8 @@ const createStyles = (theme: typeof defaultTheme) =>
             elevation: 2,
         },
         menuItemImage: {
-            width: '100%',
-            height: 150,
-            borderRadius: 8,
-            marginBottom: 8,
+            width: 50,
+            height: 50,
         },
         menuText: {
             fontSize: 16,
