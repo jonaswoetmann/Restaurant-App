@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -149,10 +149,8 @@ useEffect(() => {
 }, [selectedMarkerId, cafes, searchQuery]);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <View
             style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
@@ -195,7 +193,14 @@ useEffect(() => {
                                     <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
                                 </View>
                             </Pressable>
-                            <ThemedView colorName = 'page' style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+                            <ThemedView colorName = 'page' style={{
+                                flex: 1,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginTop:-5,
+                                borderTopLeftRadius: 8,
+                                borderTopRightRadius: 8
+                            }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
                                 ) : (
@@ -206,7 +211,7 @@ useEffect(() => {
                     )}
                 </View>
             </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+        </View>
     );
 }
 
