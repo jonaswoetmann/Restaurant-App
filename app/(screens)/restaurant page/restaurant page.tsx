@@ -118,9 +118,12 @@ export default function CafeScreen() {
                                 params: {
                                     id: id,
                                     name: restaurant?.name,
-                                    description: menuDescription,
+                                    description: restaurant?.description || '',
+                                    openingTimes: restaurant?.openingTimes || '',
+                                    closingTimes: restaurant?.closingTimes || '',
                                     latitude: restaurant?.latitude?.toString() || '0',
                                     longitude: restaurant?.longitude?.toString() || '0',
+                                    themeSecondaryColor: themeState.colors.secondary,
                                 },
                             })
                         }
