@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
-import { Image } from 'expo-image';
+import { Image } from 'react-native';
 
 const defaultTheme = {
     name: 'Standard',
@@ -158,7 +158,7 @@ export default function CafeScreen() {
                                             <View style={{ flex: 1 }}>
                                                 <View style={{ flexDirection: 'row'}}>
                                                     <Image
-                                                        source={ menuItem.photoLink }
+                                                        source={{ uri: typeof menuItem.photoLink === 'string' ? menuItem.photoLink : 'https://via.placeholder.com/400x200' }}
                                                         style={styles.menuItemImage}
                                                     />
                                                     <View style={{ flex: 1, alignItems: 'center' }}>
