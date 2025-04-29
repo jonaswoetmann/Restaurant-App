@@ -156,12 +156,16 @@ export default function CafeScreen() {
                                     return (
                                         <View key={menuItem.id} style={styles.menuItem}>
                                             <View style={{ flex: 1 }}>
+                                                <View style={{ flexDirection: 'row'}}>
                                                     <Image
                                                         source={ menuItem.photoLink }
                                                         style={styles.menuItemImage}
                                                     />
-                                                <Text style={styles.menuText}>{menuItem.name}</Text>
-                                                <Text style={styles.priceText}>{menuItem.price} DKK</Text>
+                                                    <View style={{ flex: 1, alignItems: 'center' }}>
+                                                        <Text style={styles.menuText}>{menuItem.name}</Text>
+                                                        <Text style={styles.priceText}>{menuItem.price} DKK</Text>
+                                                    </View>
+                                                </View>
                                             </View>
 
                                             <View style={styles.infoAndActionsRow}>
