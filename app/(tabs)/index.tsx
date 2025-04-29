@@ -78,7 +78,7 @@ export default function HomeScreen() {
     ).current;
 
     const handleBarPress = () => {
-        let nextSnapPoint = 20;
+        let nextSnapPoint;
         if (mapHeightRef.current === HighSnap) {
             nextSnapPoint = MidSnap;
         } else if (mapHeightRef.current === MidSnap) {
