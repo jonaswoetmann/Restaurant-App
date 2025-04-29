@@ -33,7 +33,7 @@ export default function HomeScreen() {
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
-                const { dy } = gestureState;
+                const { dy, vy } = gestureState;
                 let newHeight = mapHeightRef.current + dy;
 
                 if (newHeight > LowSnap) newHeight = LowSnap;
@@ -41,27 +41,24 @@ export default function HomeScreen() {
 
                 const SNAP_POINTS = [HighSnap, MidSnap, LowSnap];
 
-                let currentSnapIndex = 0;
+                let targetSnapIndex = 0;
                 let minDistance = Infinity;
                 SNAP_POINTS.forEach((point, index) => {
                     const distance = Math.abs(newHeight - point);
                     if (distance < minDistance) {
                         minDistance = distance;
-                        currentSnapIndex = index;
+                        targetSnapIndex = index;
                     }
                 });
 
-                let targetSnapIndex = currentSnapIndex;
+                const VELOCITY_THRESHOLD = 0.3;
 
-                if (Math.abs(dy) < 5) {
-                    handleBarPress();
-                    return;
-                }
-
-                if (dy < 0) {
-                    targetSnapIndex = Math.max(0, currentSnapIndex - 1);
-                } else if (dy > 0) {
-                    targetSnapIndex = Math.min(SNAP_POINTS.length - 1, currentSnapIndex + 1);
+                if (Math.abs(vy) >= VELOCITY_THRESHOLD) {
+                    if (vy < 0 && targetSnapIndex > 0) {
+                        targetSnapIndex--;
+                    } else if (vy > 0 && targetSnapIndex < SNAP_POINTS.length - 1) {
+                        targetSnapIndex++;
+                    }
                 }
 
                 const snapPoint = SNAP_POINTS[targetSnapIndex];
