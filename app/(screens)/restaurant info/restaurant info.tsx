@@ -3,7 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linki
 import MapView, { Marker } from 'react-native-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
-import StarRating from 'react-native-star-rating-widget'; // npm install react-native-star-rating-widget
+import StarRating from 'react-native-star-rating-widget';
+import { Ionicons } from '@expo/vector-icons';
+import { useFavorites } from '../../FavoriteContext';
+
+
 
 type Rating = {
     id: number;
@@ -29,6 +33,10 @@ export default function RestaurantInfoScreen() {
     const [newRating, setNewRating] = useState('');
     const [newText, setNewText] = useState('');
     const [submitting, setSubmitting] = useState(false);
+
+    const { favorites, toggleFavorite } = useFavorites();
+    const restaurantId = Number(id);
+    const isFavorite = favorites.some((fav: { id: number }) => fav.id === restaurantId);
 
     const secondaryColor = (themeSecondaryColor as string) || defaultTheme.secondary;
 
@@ -90,7 +98,18 @@ export default function RestaurantInfoScreen() {
             {/* Header with background color */}
             <View style={styles.headerBox}>
                 <Text style={styles.headerText}>{name || 'Restaurant'}</Text>
+                <TouchableOpacity
+                    onPress={() => toggleFavorite({ id: restaurantId, name: name?.toString() || 'Unknown' })}
+                    style={{ marginLeft: 'auto' }}
+                >
+                    <Ionicons
+                        name={isFavorite ? 'heart' : 'heart-outline'}
+                        size={28}
+                        color={isFavorite ? 'red' : 'gray'}
+                    />
+                </TouchableOpacity>
             </View>
+
 
             <MapView
                 style={styles.map}
@@ -190,13 +209,13 @@ export default function RestaurantInfoScreen() {
 const createStyles = (secondaryColor: string) => StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff' },
     headerBox: {
-        width: '100%',
-        height: 100, // <--- smaller height (before it was 150)
-        paddingHorizontal: 16, // <--- horizontal padding (for left/right space)
-        paddingVertical: 8,    // <--- a bit vertical padding
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
         backgroundColor: secondaryColor,
-        justifyContent: 'center',
-        alignItems: 'flex-start', // <--- align text to the LEFT
+        height: 100,
         marginBottom: 12,
     },
     headerText: {
