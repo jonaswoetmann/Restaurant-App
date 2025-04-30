@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, Text, FlatList, Image } from 'react-native';
+import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useFavorites } from '../FavoriteContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function AccountScreen() {
-    const { favorites } = useFavorites();
+    const { favorites, toggleFavorite } = useFavorites();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Favorite Restaurants</Text>
+            <View style={{ marginTop: 40 }}>
+                <Text style={styles.title}>Favorite Restaurants</Text>
+            </View>
+
             {favorites.length === 0 ? (
                 <Text style={styles.noFavorites}>No favorites yet.</Text>
             ) : (
@@ -19,6 +22,11 @@ export default function AccountScreen() {
                         <View style={styles.item}>
                             <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
                             <Text style={styles.name}>{item.name}</Text>
+
+                            {/* 🗑️ Remove Favorite Button */}
+                            <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.removeButton}>
+                                <Ionicons name="trash" size={20} color="gray" />
+                            </TouchableOpacity>
                         </View>
                     )}
                 />
@@ -61,6 +69,10 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 16,
         fontWeight: '600',
+        flex: 1,
+    },
+    removeButton: {
+        padding: 6,
     },
 });
 
