@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -33,7 +33,7 @@ export default function HomeScreen() {
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
-                const { dy } = gestureState;
+                const { dy, vy } = gestureState;
                 let newHeight = mapHeightRef.current + dy;
 
                 if (newHeight > LowSnap) newHeight = LowSnap;
@@ -41,27 +41,24 @@ export default function HomeScreen() {
 
                 const SNAP_POINTS = [HighSnap, MidSnap, LowSnap];
 
-                let currentSnapIndex = 0;
+                let targetSnapIndex = 0;
                 let minDistance = Infinity;
                 SNAP_POINTS.forEach((point, index) => {
                     const distance = Math.abs(newHeight - point);
                     if (distance < minDistance) {
                         minDistance = distance;
-                        currentSnapIndex = index;
+                        targetSnapIndex = index;
                     }
                 });
 
-                let targetSnapIndex = currentSnapIndex;
+                const VELOCITY_THRESHOLD = 0.3;
 
-                if (Math.abs(dy) < 5) {
-                    handleBarPress();
-                    return;
-                }
-
-                if (dy < 0) {
-                    targetSnapIndex = Math.max(0, currentSnapIndex - 1);
-                } else if (dy > 0) {
-                    targetSnapIndex = Math.min(SNAP_POINTS.length - 1, currentSnapIndex + 1);
+                if (Math.abs(vy) >= VELOCITY_THRESHOLD) {
+                    if (vy < 0 && targetSnapIndex > 0) {
+                        targetSnapIndex--;
+                    } else if (vy > 0 && targetSnapIndex < SNAP_POINTS.length - 1) {
+                        targetSnapIndex++;
+                    }
                 }
 
                 const snapPoint = SNAP_POINTS[targetSnapIndex];
@@ -78,7 +75,7 @@ export default function HomeScreen() {
     ).current;
 
     const handleBarPress = () => {
-        let nextSnapPoint = 20;
+        let nextSnapPoint;
         if (mapHeightRef.current === HighSnap) {
             nextSnapPoint = MidSnap;
         } else if (mapHeightRef.current === MidSnap) {
@@ -149,10 +146,8 @@ useEffect(() => {
 }, [selectedMarkerId, cafes, searchQuery]);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <View
             style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
@@ -195,7 +190,14 @@ useEffect(() => {
                                     <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
                                 </View>
                             </Pressable>
-                            <ThemedView colorName = 'page' style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:-5, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+                            <ThemedView colorName = 'page' style={{
+                                flex: 1,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginTop:-5,
+                                borderTopLeftRadius: 8,
+                                borderTopRightRadius: 8
+                            }}>
                                 {isLoading ? (
                                     <Text>Loading...</Text>
                                 ) : (
@@ -206,7 +208,7 @@ useEffect(() => {
                     )}
                 </View>
             </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+        </View>
     );
 }
 
