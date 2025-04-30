@@ -1,15 +1,51 @@
 import React from 'react';
-import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useFavorites } from '../FavoriteContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTagPreferences } from '../TagPreferenceContext';
 
 export default function AccountScreen() {
     const { favorites, toggleFavorite } = useFavorites();
+    const { selectedTags, toggleTag } = useTagPreferences();
     const router = useRouter();
 
+    // Extract unique tags from favorites
+    const allTags = Array.from(
+        new Set(
+            favorites.flatMap((fav) => fav.tags || [])
+        )
+    );
+
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
+            <Text style={styles.title}>Preferences</Text>
+
+            <View style={styles.tagContainer}>
+                {allTags.map((tag) => {
+                    const isSelected = selectedTags.includes(tag);
+                    return (
+                        <TouchableOpacity
+                            key={tag}
+                            onPress={() => toggleTag(tag)}
+                            style={[
+                                styles.tagButton,
+                                isSelected && styles.tagButtonSelected,
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.tagText,
+                                    isSelected && styles.tagTextSelected,
+                                ]}
+                            >
+                                {tag}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+
             <View style={{ marginTop: 40 }}>
                 <Text style={styles.title}>Favorite Restaurants</Text>
             </View>
@@ -24,11 +60,10 @@ export default function AccountScreen() {
                         <TouchableOpacity
                             onPress={() =>
                                 router.push({
-                                    pathname: '/restaurant page/restaurant page', ///restaurant page/restaurant page
+                                    pathname: '/restaurant page/restaurant page',
                                     params: {
                                         id: item.id,
                                         name: item.name,
-                                        // add others if needed: description, lat, lon, etc.
                                     },
                                 })
                             }
@@ -36,7 +71,6 @@ export default function AccountScreen() {
                         >
                             <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
                             <Text style={styles.name}>{item.name}</Text>
-
                             <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.removeButton}>
                                 <Ionicons name="trash" size={20} color="gray" />
                             </TouchableOpacity>
@@ -44,20 +78,20 @@ export default function AccountScreen() {
                     )}
                 />
             )}
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        backgroundColor: '#fff',
         flex: 1,
+        backgroundColor: '#fff',
+        paddingHorizontal: 20,
     },
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginVertical: 16,
     },
     noFavorites: {
         fontSize: 16,
@@ -86,6 +120,29 @@ const styles = StyleSheet.create({
     },
     removeButton: {
         padding: 6,
+    },
+    tagContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    tagButton: {
+        backgroundColor: '#eee',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        marginBottom: 10,
+    },
+    tagButtonSelected: {
+        backgroundColor: '#f4845f',
+    },
+    tagText: {
+        fontSize: 14,
+        color: '#333',
+    },
+    tagTextSelected: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

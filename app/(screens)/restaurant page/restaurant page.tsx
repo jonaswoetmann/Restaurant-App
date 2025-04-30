@@ -125,6 +125,7 @@ export default function CafeScreen() {
                                     latitude: restaurant?.latitude?.toString() || '0',
                                     longitude: restaurant?.longitude?.toString() || '0',
                                     themeSecondaryColor: themeState.colors.secondary,
+
                                 },
                             })
                         }

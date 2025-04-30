@@ -7,11 +7,12 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { CartProvider } from './(screens)/cart/CartContext'; // ✅ Make sure this path is correct
+import { CartProvider } from './(screens)/cart/CartContext';
 import { MarkerProvider } from '@/components/MarkerContext';
-import { FavoriteProvider } from './FavoriteContext';
+import { FavoriteProvider } from './FavoriteContext'; // ✅ Ensure this is correct
+import { PreferenceProvider } from './TagPreferenceContext';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// Prevent splash screen auto-hide until fonts are loaded
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -26,27 +27,26 @@ export default function RootLayout() {
         }
     }, [loaded]);
 
-    if (!loaded) {
-        return null;
-    }
+    if (!loaded) return null;
 
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <FavoriteProvider>
-                <CartProvider>
-
-                    <MarkerProvider>
-
-                        <Stack screenOptions={{ headerTitle: '' }}>
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                            <Stack.Screen name="+not-found" />
-                        </Stack>
-                        <StatusBar style="auto" />
-                    </MarkerProvider>
-                </CartProvider>
-            </FavoriteProvider>
+            <CartProvider>
+                <MarkerProvider>
+                    <FavoriteProvider>
+                        <PreferenceProvider>
+                            <Stack screenOptions={{ headerTitle: '' }}>
+                                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                                <Stack.Screen name="+not-found" />
+                            </Stack>
+                            <StatusBar style="auto" />
+                        </PreferenceProvider>
+                    </FavoriteProvider>
+                </MarkerProvider>
+            </CartProvider>
         </ThemeProvider>
     );
 }
+
 
 //'./FavoriteContext';

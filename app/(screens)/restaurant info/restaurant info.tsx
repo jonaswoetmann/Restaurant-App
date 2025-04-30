@@ -22,7 +22,7 @@ const defaultTheme = {
 
 export default function RestaurantInfoScreen() {
     const router = useRouter();
-    const { id, name, description, openingTimes, closingTimes, latitude, longitude, themeSecondaryColor } = useLocalSearchParams();
+    const { id, name, description, openingTimes, closingTimes, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
 
     const lat = parseFloat(latitude as string) || 0;
     const lon = parseFloat(longitude as string) || 0;
@@ -99,8 +99,13 @@ export default function RestaurantInfoScreen() {
             <View style={styles.headerBox}>
                 <Text style={styles.headerText}>{name || 'Restaurant'}</Text>
                 <TouchableOpacity
-                    onPress={() => toggleFavorite({ id: restaurantId, name: name?.toString() || 'Unknown' })}
-                    style={{ marginLeft: 'auto' }}
+                    onPress={() =>
+                        toggleFavorite({
+                            id: restaurantId,
+                            name: name?.toString() || 'Unknown',
+                            tags: typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : [],
+                        })
+                    }
                 >
                     <Ionicons
                         name={isFavorite ? 'heart' : 'heart-outline'}

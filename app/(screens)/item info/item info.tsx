@@ -1,16 +1,18 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useTagPreferences } from '../../TagPreferenceContext';
 
 export default function ItemInfoScreen() {
   const { itemName, sectionName, description, photoLink, tags } = useLocalSearchParams();
+  const { selectedTags } = useTagPreferences();
+
+  const tagList = typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : [];
 
   return (
       <ScrollView style={styles.container}>
         <Text style={styles.title}>{itemName}</Text>
-        {sectionName ? (
-            <Text style={styles.subtitle}>Category: {sectionName}</Text>
-        ) : null}
+        {sectionName ? <Text style={styles.subtitle}>Category: {sectionName}</Text> : null}
 
         <Image
             source={{ uri: typeof photoLink === 'string' ? photoLink : 'https://via.placeholder.com/400x200' }}
@@ -24,11 +26,28 @@ export default function ItemInfoScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionText}>Allergens</Text>
-            <Text style={styles.sectionText}>{tags}</Text>
+            <Text style={styles.sectionText}>Tags</Text>
+            <View style={styles.tagsContainer}>
+              {tagList.length === 0 ? (
+                  <Text style={styles.descriptionText}>No tags</Text>
+              ) : (
+                  tagList.map((tag, index) => {
+                    const isLowlighted = selectedTags.includes(tag);
+                    return (
+                        <View
+                            key={index}
+                            style={[
+                              styles.tagBox,
+                              isLowlighted && styles.lowlightedTag,
+                            ]}
+                        >
+                          <Text style={styles.tagText}>{tag}</Text>
+                        </View>
+                    );
+                  })
+              )}
+            </View>
           </View>
-
-
         </View>
       </ScrollView>
   );
@@ -64,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#ccc',
     marginBottom: 10,
     borderRadius: 8,
   },
@@ -77,7 +96,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tagBox: {
+    backgroundColor: '#eee',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+  },
+  lowlightedTag: {
+    opacity: 0.4,
+  },
+  tagText: {
+    fontSize: 14,
+    color: '#000',
+  },
 });
+
 
 
 

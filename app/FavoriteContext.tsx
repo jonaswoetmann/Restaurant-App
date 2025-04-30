@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 type FavoriteRestaurant = {
     id: number;
     name: string;
+    tags?: string[]; // ✅ Add this optional tags field
 };
 
 type FavoriteContextType = {
