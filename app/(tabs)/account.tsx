@@ -28,20 +28,34 @@ export default function AccountScreen() {
                     </TouchableOpacity>
                 ))}
             </View>
+
             <Text style={styles.title}>Favorite Restaurants</Text>
-            <FlatList
-                data={favorites}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.item}>
-                        <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
-                        <Text style={styles.name}>{item.name}</Text>
-                        <TouchableOpacity onPress={() => toggleFavorite(item)}>
-                            <Ionicons name="trash" size={20} color="gray" />
+
+            {favorites.length === 0 ? (
+                <Text style={styles.noFavorites}>No favorited restaurants.</Text>
+            ) : (
+                <FlatList
+                    data={favorites}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.item}
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/restaurant page/restaurant page',
+                                    params: { id: item.id, name: item.name },
+                                })
+                            }
+                        >
+                            <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
+                            <Text style={styles.name}>{item.name}</Text>
+                            <TouchableOpacity onPress={() => toggleFavorite(item)}>
+                                <Ionicons name="trash" size={20} color="gray" />
+                            </TouchableOpacity>
                         </TouchableOpacity>
-                    </TouchableOpacity>
-                )}
-            />
+                    )}
+                />
+            )}
         </View>
     );
 }
@@ -53,10 +67,19 @@ const styles = StyleSheet.create({
     tag: { paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#eee', borderRadius: 20 },
     tagSelected: { backgroundColor: '#f4845f' },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-    item: { flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: '#fef1ed', borderRadius: 12, marginBottom: 10 },
+    noFavorites: { fontSize: 16, color: '#888', fontStyle: 'italic', marginBottom: 20 },
+    item: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        backgroundColor: '#fef1ed',
+        borderRadius: 12,
+        marginBottom: 10,
+    },
     icon: { marginRight: 12 },
     name: { fontSize: 16, fontWeight: '600', flex: 1 },
 });
+
 
 
 
