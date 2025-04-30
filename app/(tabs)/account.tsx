@@ -1,55 +1,62 @@
-import React from 'react';
-import { View, StyleSheet, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useFavorites } from '../FavoriteContext';
+import { useTagPreferences } from '../TagPreferenceContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTagPreferences } from '../TagPreferenceContext';
+
+const fallbackTags = ['Vegan', 'Gluten-Free', 'Peanuts', 'Mild'];
 
 export default function AccountScreen() {
     const { favorites, toggleFavorite } = useFavorites();
     const { selectedTags, toggleTag } = useTagPreferences();
+    const [allTags, setAllTags] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    // Extract unique tags from favorites
-    const allTags = Array.from(
-        new Set(
-            favorites.flatMap((fav) => fav.tags || [])
-        )
-    );
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const res = await fetch('http://130.225.170.52:10331/api/tags');
+                const data = await res.json();
+                const tagsFromServer = data.map((t: any) => t.tagvalue);
+                setAllTags(tagsFromServer);
+            } catch (err) {
+                console.warn('❌ Failed to fetch tags, using fallback list.');
+                setAllTags(fallbackTags);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTags();
+    }, []);
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>Preferences</Text>
-
-            <View style={styles.tagContainer}>
-                {allTags.map((tag) => {
-                    const isSelected = selectedTags.includes(tag);
-                    return (
+        <View style={styles.container}>
+            <Text style={styles.prefTitle}>Preferences</Text>
+            {loading ? (
+                <Text>Loading tags...</Text>
+            ) : allTags.length === 0 ? (
+                <Text>No tags found.</Text>
+            ) : (
+                <View style={styles.tagContainer}>
+                    {allTags.map(tag => (
                         <TouchableOpacity
                             key={tag}
                             onPress={() => toggleTag(tag)}
                             style={[
-                                styles.tagButton,
-                                isSelected && styles.tagButtonSelected,
+                                styles.tag,
+                                selectedTags.includes(tag) && styles.tagSelected,
                             ]}
                         >
-                            <Text
-                                style={[
-                                    styles.tagText,
-                                    isSelected && styles.tagTextSelected,
-                                ]}
-                            >
-                                {tag}
-                            </Text>
+                            <Text style={{ color: selectedTags.includes(tag) ? 'white' : 'black' }}>{tag}</Text>
                         </TouchableOpacity>
-                    );
-                })}
-            </View>
+                    ))}
+                </View>
+            )}
 
-            <View style={{ marginTop: 40 }}>
-                <Text style={styles.title}>Favorite Restaurants</Text>
-            </View>
-
+            <Text style={styles.title}>Favorite Restaurants</Text>
             {favorites.length === 0 ? (
                 <Text style={styles.noFavorites}>No favorites yet.</Text>
             ) : (
@@ -58,45 +65,35 @@ export default function AccountScreen() {
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <TouchableOpacity
+                            style={styles.item}
                             onPress={() =>
                                 router.push({
                                     pathname: '/restaurant page/restaurant page',
-                                    params: {
-                                        id: item.id,
-                                        name: item.name,
-                                    },
+                                    params: { id: item.id, name: item.name },
                                 })
                             }
-                            style={styles.item}
                         >
                             <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
                             <Text style={styles.name}>{item.name}</Text>
-                            <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.removeButton}>
+                            <TouchableOpacity onPress={() => toggleFavorite(item)}>
                                 <Ionicons name="trash" size={20} color="gray" />
                             </TouchableOpacity>
                         </TouchableOpacity>
                     )}
                 />
             )}
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 20,
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginVertical: 16,
-    },
-    noFavorites: {
-        fontSize: 16,
-        color: '#888',
-    },
+    container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+    prefTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 8, marginTop: 40 },
+    tagContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
+    tag: { paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#eee', borderRadius: 20 },
+    tagSelected: { backgroundColor: '#f4845f' },
+    title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
+    noFavorites: { fontSize: 16, color: '#888' },
     item: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -110,43 +107,9 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 2,
     },
-    icon: {
-        marginRight: 12,
-    },
-    name: {
-        fontSize: 16,
-        fontWeight: '600',
-        flex: 1,
-    },
-    removeButton: {
-        padding: 6,
-    },
-    tagContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-    },
-    tagButton: {
-        backgroundColor: '#eee',
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 20,
-        marginBottom: 10,
-    },
-    tagButtonSelected: {
-        backgroundColor: '#f4845f',
-    },
-    tagText: {
-        fontSize: 14,
-        color: '#333',
-    },
-    tagTextSelected: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
+    icon: { marginRight: 12 },
+    name: { fontSize: 16, fontWeight: '600', flex: 1 },
 });
 
 
 
-
-//'../FavoriteContext';

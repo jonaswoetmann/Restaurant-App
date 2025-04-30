@@ -103,7 +103,11 @@ export default function RestaurantInfoScreen() {
                         toggleFavorite({
                             id: restaurantId,
                             name: name?.toString() || 'Unknown',
-                            tags: typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : [],
+                            tags: typeof tags === 'string'
+                                ? tags.split(',').map(t => t.trim())
+                                : Array.isArray(tags)
+                                    ? tags
+                                    : [],
                         })
                     }
                 >

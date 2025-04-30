@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
-import { Image } from 'react-native';
+import { useTagPreferences } from '../../TagPreferenceContext';
 
 const defaultTheme = {
     name: 'Standard',
@@ -18,14 +18,31 @@ const defaultTheme = {
     },
 };
 
+type TagType = { tagvalue: string };
+
+type MenuItemType = {
+    id: number;
+    name: string;
+    price: number;
+    sectionName?: string;
+    description?: string;
+    photoLink?: string;
+    tags?: TagType[];
+};
+
+type SectionType = {
+    title: string;
+    data: MenuItemType[];
+};
+
 export default function CafeScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
     const [restaurant, setRestaurant] = useState<any>(null);
-    const [menuDescription, setMenuDescription] = useState('');
-    const [sections, setSections] = useState<any[]>([]);
+    const [sections, setSections] = useState<SectionType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [themeState, setTheme] = useState(defaultTheme);
+    const { selectedTags } = useTagPreferences();
 
     const {
         cart,
@@ -71,8 +88,6 @@ export default function CafeScreen() {
                 }
 
                 const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then(res => res.json());
-                setMenuDescription(menus[0]?.description || 'No description available');
-
                 const menuSections = await Promise.all(menus.map((menu: any) =>
                     fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then(res => res.json())
                 ));
@@ -80,14 +95,15 @@ export default function CafeScreen() {
                 const menuItems = await Promise.all(menuSections.flat().map((section: any) =>
                     fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
                 ));
-                const sectionData = menuSections.flat().map((section: any, index: number) => {
-                    const items = menuItems[index].map((item: any) => ({
+
+                const sectionData: SectionType[] = menuSections.flat().map((section: any, index: number) => {
+                    const items: MenuItemType[] = menuItems[index].map((item: any) => ({
                         id: item.id,
                         name: item.name || 'Unknown',
                         price: item.price || 0,
                         sectionName: section.name,
                         description: item.description || 'No description available',
-                        photoLink: item.photolink || 'https://jamnawmenu.blob.core.windows.net/menu-items/Green%20Salad1',
+                        photoLink: item.photolink || 'https://via.placeholder.com/400x200',
                         tags: Array.isArray(item.tags) ? item.tags.filter(Boolean) : [],
                     }));
                     return {
@@ -113,7 +129,15 @@ export default function CafeScreen() {
                 <Text style={styles.headerText}>{restaurant?.name || 'Loading...'}</Text>
                 <View style={styles.headerActions}>
                     <TouchableOpacity
-                        onPress={() =>
+                        onPress={() => {
+                            const allTags = Array.from(new Set(
+                                sections.flatMap(section =>
+                                    section.data.flatMap(item =>
+                                        item.tags?.map(tag => tag.tagvalue) || []
+                                    )
+                                )
+                            ));
+
                             router.push({
                                 pathname: '/restaurant info/restaurant info',
                                 params: {
@@ -125,10 +149,10 @@ export default function CafeScreen() {
                                     latitude: restaurant?.latitude?.toString() || '0',
                                     longitude: restaurant?.longitude?.toString() || '0',
                                     themeSecondaryColor: themeState.colors.secondary,
-
+                                    tags: allTags.join(','),
                                 },
-                            })
-                        }
+                            });
+                        }}
                         style={styles.iconContainer}
                     >
                         <InfoIcon />
@@ -149,19 +173,26 @@ export default function CafeScreen() {
                     <FlatList
                         data={sections}
                         keyExtractor={(item) => item.title}
-                        renderItem={({ item }) => (
+                        renderItem={({ item }: { item: SectionType }) => (
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>{item.title}</Text>
-                                {item.data.map((menuItem: {
-                                    id: any; name: any; price: any; sectionName?: any; description?: any; photoLink?: any; tags?: any; }) => {
-                                    const existing = cart.find((c) => c.id === menuItem.id);
-                                    const quantity = existing?.quantity || 0;
+                                {item.data.map((menuItem: MenuItemType) => {
+                                    const quantity = cart.find((c) => c.id === menuItem.id)?.quantity || 0;
+                                    const itemTags = menuItem.tags?.map(t => t.tagvalue) || [];
+                                    const isLowlighted = selectedTags.length > 0 && !itemTags.some(tag => selectedTags.includes(tag));
+
                                     return (
-                                        <View key={menuItem.id} style={styles.menuItem}>
+                                        <View
+                                            key={menuItem.id}
+                                            style={[
+                                                styles.menuItem,
+                                                isLowlighted && { opacity: 0.4 },
+                                            ]}
+                                        >
                                             <View style={{ flex: 1 }}>
-                                                <View style={{ flexDirection: 'row'}}>
+                                                <View style={{ flexDirection: 'row' }}>
                                                     <Image
-                                                        source={{ uri: typeof menuItem.photoLink === 'string' ? menuItem.photoLink : 'https://via.placeholder.com/400x200' }}
+                                                        source={{ uri: menuItem.photoLink || 'https://via.placeholder.com/400x200' }}
                                                         style={styles.menuItemImage}
                                                     />
                                                     <View style={{ flex: 1, alignItems: 'center' }}>
@@ -182,7 +213,7 @@ export default function CafeScreen() {
                                                                 sectionName: menuItem.sectionName,
                                                                 description: menuItem.description,
                                                                 photoLink: menuItem.photoLink,
-                                                                tags: menuItem.tags?.map((tag: any) => tag.tagvalue).join(', ') || 'No tags',
+                                                                tags: itemTags.join(', '),
                                                             },
                                                         })
                                                     }
@@ -192,25 +223,16 @@ export default function CafeScreen() {
 
                                                 {quantity > 0 ? (
                                                     <View style={styles.actionBox}>
-                                                        <TouchableOpacity
-                                                            onPress={() => decreaseQuantity(menuItem.id)}
-                                                            style={styles.qtyButton}
-                                                        >
+                                                        <TouchableOpacity onPress={() => decreaseQuantity(menuItem.id)} style={styles.qtyButton}>
                                                             <Text style={styles.qtyButtonText}>-</Text>
                                                         </TouchableOpacity>
                                                         <Text style={styles.quantityText}>{quantity}</Text>
-                                                        <TouchableOpacity
-                                                            onPress={() => increaseQuantity(menuItem.id)}
-                                                            style={styles.qtyButton}
-                                                        >
+                                                        <TouchableOpacity onPress={() => increaseQuantity(menuItem.id)} style={styles.qtyButton}>
                                                             <Text style={styles.qtyButtonText}>+</Text>
                                                         </TouchableOpacity>
                                                     </View>
                                                 ) : (
-                                                    <TouchableOpacity
-                                                        onPress={() => addToCart(menuItem)}
-                                                        style={styles.addButton}
-                                                    >
+                                                    <TouchableOpacity onPress={() => addToCart(menuItem)} style={styles.addButton}>
                                                         <Text style={styles.addButtonText}>Add</Text>
                                                     </TouchableOpacity>
                                                 )}
