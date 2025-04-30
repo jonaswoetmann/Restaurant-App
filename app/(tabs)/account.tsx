@@ -2,9 +2,11 @@ import React from 'react';
 import { View, StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useFavorites } from '../FavoriteContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function AccountScreen() {
     const { favorites, toggleFavorite } = useFavorites();
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
@@ -19,15 +21,26 @@ export default function AccountScreen() {
                     data={favorites}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <View style={styles.item}>
+                        <TouchableOpacity
+                            onPress={() =>
+                                router.push({
+                                    pathname: '/restaurant page/restaurant page', ///restaurant page/restaurant page
+                                    params: {
+                                        id: item.id,
+                                        name: item.name,
+                                        // add others if needed: description, lat, lon, etc.
+                                    },
+                                })
+                            }
+                            style={styles.item}
+                        >
                             <Ionicons name="restaurant" size={24} color="#f4845f" style={styles.icon} />
                             <Text style={styles.name}>{item.name}</Text>
 
-                            {/* 🗑️ Remove Favorite Button */}
                             <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.removeButton}>
                                 <Ionicons name="trash" size={20} color="gray" />
                             </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             )}
@@ -75,6 +88,7 @@ const styles = StyleSheet.create({
         padding: 6,
     },
 });
+
 
 
 
