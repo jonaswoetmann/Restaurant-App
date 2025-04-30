@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
 import { useCart } from '../cart/CartContext';
-import { Image } from 'expo-image';
+import { Image } from 'react-native';
 
 const defaultTheme = {
     name: 'Standard',
@@ -88,6 +88,7 @@ export default function CafeScreen() {
                         sectionName: section.name,
                         description: item.description || 'No description available',
                         photoLink: item.photolink || 'https://jamnawmenu.blob.core.windows.net/menu-items/Green%20Salad1',
+                        tags: Array.isArray(item.tags) ? item.tags.filter(Boolean) : [],
                     }));
                     return {
                         title: section.name || `Section ${section.id}`,
@@ -150,7 +151,8 @@ export default function CafeScreen() {
                         renderItem={({ item }) => (
                             <View style={styles.section}>
                                 <Text style={styles.sectionTitle}>{item.title}</Text>
-                                {item.data.map((menuItem: { id: any; name: any; price: any; sectionName?: any; description?: any; photoLink?: any; }) => {
+                                {item.data.map((menuItem: {
+                                    id: any; name: any; price: any; sectionName?: any; description?: any; photoLink?: any; tags?: any; }) => {
                                     const existing = cart.find((c) => c.id === menuItem.id);
                                     const quantity = existing?.quantity || 0;
                                     return (
@@ -158,7 +160,7 @@ export default function CafeScreen() {
                                             <View style={{ flex: 1 }}>
                                                 <View style={{ flexDirection: 'row'}}>
                                                     <Image
-                                                        source={ menuItem.photoLink }
+                                                        source={{ uri: typeof menuItem.photoLink === 'string' ? menuItem.photoLink : 'https://via.placeholder.com/400x200' }}
                                                         style={styles.menuItemImage}
                                                     />
                                                     <View style={{ flex: 1, alignItems: 'center' }}>
@@ -179,6 +181,7 @@ export default function CafeScreen() {
                                                                 sectionName: menuItem.sectionName,
                                                                 description: menuItem.description,
                                                                 photoLink: menuItem.photoLink,
+                                                                tags: menuItem.tags?.map((tag: any) => tag.tagvalue).join(', ') || 'No tags',
                                                             },
                                                         })
                                                     }

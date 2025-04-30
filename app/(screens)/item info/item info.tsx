@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function ItemInfoScreen() {
-  const { itemName, sectionName, description, photoLink } = useLocalSearchParams();
+  const { itemName, sectionName, description, photoLink, tags } = useLocalSearchParams();
 
   return (
       <ScrollView style={styles.container}>
@@ -25,6 +25,7 @@ export default function ItemInfoScreen() {
 
           <View style={styles.section}>
             <Text style={styles.sectionText}>Allergens</Text>
+            <Text style={styles.sectionText}>{tags}</Text>
           </View>
 
 
