@@ -3,12 +3,15 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 type TagPreferenceContextType = {
     selectedTags: string[];
     toggleTag: (tag: string) => void;
+    knownTags: string[];
+    setKnownTags: (tags: string[]) => void;
 };
 
 const TagPreferenceContext = createContext<TagPreferenceContextType | undefined>(undefined);
 
 export const PreferenceProvider = ({ children }: { children: ReactNode }) => {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [knownTags, setKnownTags] = useState<string[]>([]);
 
     const toggleTag = (tag: string) => {
         setSelectedTags(prev =>
@@ -17,7 +20,7 @@ export const PreferenceProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <TagPreferenceContext.Provider value={{ selectedTags, toggleTag }}>
+        <TagPreferenceContext.Provider value={{ selectedTags, toggleTag, knownTags, setKnownTags }}>
             {children}
         </TagPreferenceContext.Provider>
     );
@@ -32,3 +35,4 @@ export const useTagPreferences = () => {
 };
 
 export default TagPreferenceContext;
+
