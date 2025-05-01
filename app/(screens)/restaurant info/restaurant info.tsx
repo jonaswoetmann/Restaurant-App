@@ -17,12 +17,12 @@ type Rating = {
 };
 
 const defaultTheme = {
-    secondary: '#f4845f', // fallback color if not passed
+    secondary: '#f4845f',
 };
 
 export default function RestaurantInfoScreen() {
     const router = useRouter();
-    const { id, name, description, openingTimes, closingTimes, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
+    const { id, name, description, openingtime, closingtime, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
 
     const lat = parseFloat(latitude as string) || 0;
     const lon = parseFloat(longitude as string) || 0;
@@ -143,13 +143,10 @@ export default function RestaurantInfoScreen() {
                     <Text style={styles.descriptionText}>{description || 'No description available.'}</Text>
 
                     <Text style={styles.sectionText}>Opening Times</Text>
-                    <Text style={styles.descriptionText}>{openingTimes || 'No opening time available.'}</Text>
+                    <Text style={styles.descriptionText}>{`${openingtime} - ${closingtime}` || 'No opening time available.'}</Text>
 
-                    <Text style={styles.sectionText}>Closing Times</Text>
-                    <Text style={styles.descriptionText}>{closingTimes || 'No closing time available.'}</Text>
                 </View>
 
-                {/* Existing Ratings */}
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>User Ratings</Text>
                     {loadingRatings ? (
