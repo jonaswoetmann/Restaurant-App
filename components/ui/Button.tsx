@@ -7,14 +7,15 @@ type ButtonProps = {
   onPress: () => void;
   centerText?: boolean;
   showRating?: boolean;
+  rating: number;
 };
 
-export const Button: React.FC<ButtonProps> = ({ title, onPress, centerText = false, showRating = false }) => {
+export const Button: React.FC<ButtonProps> = ({ title, onPress, centerText = false, showRating = false, rating }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <View style={[showRating ? styles.row : undefined]}>
         <Text style={[styles.buttonText, centerText && styles.centerText]}>{title}</Text>
-        {showRating && <Text style={styles.rating}>5 ★</Text>}
+        {showRating && <Text style={styles.rating}>{`${rating} ⭐`}</Text>}
       </View>
     </TouchableOpacity>
   );

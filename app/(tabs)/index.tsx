@@ -8,7 +8,7 @@ import Constants from "expo-constants";
 import { useMarker } from '@/components/MarkerContext';
 
 export default function HomeScreen() {
-    const [cafes, setCafes] = useState<{ id: string; name: string; route: string }[]>([]);
+    const [cafes, setCafes] = useState<{ id: string; name: string; route: string, rating: number }[]>([]);
     const [filteredCafes, setFilteredCafes] = useState(cafes);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -99,10 +99,11 @@ export default function HomeScreen() {
                 const response = await fetch('http://130.225.170.52:10331/api/restaurants');
                 const data = await response.json();
 
-                const mappedCafes = data.map((restaurant: { id: number; name: string }) => ({
+                const mappedCafes = data.map((restaurant: { id: number; name: string, averagerating?: number }) => ({
                     id: restaurant.id.toString(),
                     name: restaurant.name,
                     route: `/restaurant page/restaurant page?id=${restaurant.id}`,
+                    rating: restaurant.averagerating ?? 0,
                 }));
 
                 setCafes(mappedCafes);
