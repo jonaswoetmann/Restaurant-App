@@ -42,11 +42,10 @@ export default function CartScreen() {
       const createOrder = await response.json();
       const orderId = parseInt(createOrder.message.replace(/\D/g, ''), 10);
 
-      const tipAmount = 0;
       const stripeResponse = await fetch(`http://130.225.170.52:10331/api/orders/${orderId}/create-payment-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tip: tipAmount }),
+        body: JSON.stringify({ }),
       });
 
       if (!stripeResponse.ok) {
