@@ -4,12 +4,14 @@ import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
 import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';
+import {useRouter} from "expo-router";
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
   const [Comment, setComment] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -128,7 +130,7 @@ export default function CartScreen() {
               onChangeText={setComment}
               multiline
             />
-            <OrderButton onPress={handleOrder} />
+            <OrderButton onPress={() => router.push('/payment screen/payment screen')} />
           </View>
         }
       />
