@@ -96,7 +96,7 @@ export default function HomeScreen() {
         const fetchCafes = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch('https://130.225.170.52:10332/api/restaurants');
+                const response = await fetch('http://130.225.170.52:10331/api/restaurants');
                 const data = await response.json();
 
                 const mappedCafes = data.map((restaurant: { id: number; name: string, averagerating?: number }) => ({

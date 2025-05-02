@@ -61,7 +61,7 @@ export default function CafeScreen() {
             try {
                 setIsLoading(true);
 
-                const restaurantData = await fetch(`https://130.225.170.52:10332/api/restaurants/${id}`).then(res => res.json());
+                const restaurantData = await fetch(`http://130.225.170.52:10331/api/restaurants/${id}`).then(res => res.json());
                 const restaurantInfo = restaurantData[0];
                 setRestaurant(restaurantInfo);
 
@@ -71,7 +71,7 @@ export default function CafeScreen() {
                 }
 
                 if (restaurantInfo.theme !== "Standard") {
-                    const themedata = await fetch(`https://130.225.170.52:10332/api/restaurants/theme/${restaurantInfo.theme}`).then(res => res.json());
+                    const themedata = await fetch(`http://130.225.170.52:10331/api/restaurants/theme/${restaurantInfo.theme}`).then(res => res.json());
                     const newTheme = {
                         name: restaurantInfo.theme,
                         colors: {
@@ -87,13 +87,13 @@ export default function CafeScreen() {
                     setTheme(newTheme);
                 }
 
-                const menus = await fetch(`https://130.225.170.52:10332/api/menus/restaurant/${id}`).then(res => res.json());
+                const menus = await fetch(`http://130.225.170.52:10331/api/menus/restaurant/${id}`).then(res => res.json());
                 const menuSections = await Promise.all(menus.map((menu: any) =>
-                    fetch(`https://130.225.170.52:10332/api/menuSections/menu/${menu.id}`).then(res => res.json())
+                    fetch(`http://130.225.170.52:10331/api/menuSections/menu/${menu.id}`).then(res => res.json())
                 ));
 
                 const menuItems = await Promise.all(menuSections.flat().map((section: any) =>
-                    fetch(`https://130.225.170.52:10332/api/menuItems/section/${section.id}`).then(res => res.json())
+                    fetch(`http://130.225.170.52:10331/api/menuItems/section/${section.id}`).then(res => res.json())
                 ));
 
                 const sectionData: SectionType[] = menuSections.flat().map((section: any, index: number) => {
