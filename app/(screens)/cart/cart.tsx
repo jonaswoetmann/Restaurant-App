@@ -25,7 +25,7 @@ export default function CartScreen() {
         comment: Comment,
       };
 
-      const response = await fetch('http://130.225.170.52:10331/api/orders/add', {
+      const response = await fetch('https://130.225.170.52:10332/api/orders/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function CartScreen() {
       const createOrder = await response.json();
       const orderId = parseInt(createOrder.message.replace(/\D/g, ''), 10);
 
-      const stripeResponse = await fetch(`http://130.225.170.52:10331/api/orders/${orderId}/create-payment-session`, {
+      const stripeResponse = await fetch(`https://130.225.170.52:10332/api/orders/${orderId}/create-payment-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ }),

@@ -44,7 +44,7 @@ export default function RestaurantInfoScreen() {
 
     const fetchRatings = async () => {
         try {
-            const res = await fetch('http://130.225.170.52:10331/api/ratings');
+            const res = await fetch('https://130.225.170.52:10332/api/ratings');
             const data: Rating[] = await res.json();
             const filtered = data.filter((r) => r.restaurantid === Number(id));
             setRatings(filtered);
@@ -69,7 +69,7 @@ export default function RestaurantInfoScreen() {
 
         setSubmitting(true);
         try {
-            const res = await fetch('http://130.225.170.52:10331/api/ratings', {
+            const res = await fetch('https://130.225.170.52:10332/api/ratings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -84,7 +84,7 @@ export default function RestaurantInfoScreen() {
             setNewRating('');
             setNewText('');
             Alert.alert('Success', 'Your review has been submitted!');
-            fetchRatings(); // Refresh ratings
+            fetchRatings();
         } catch (err) {
             console.error(err);
             Alert.alert('Error', 'Failed to submit your review.');
@@ -95,7 +95,6 @@ export default function RestaurantInfoScreen() {
 
     return (
         <ScrollView style={styles.container}>
-            {/* Header with background color */}
             <View style={styles.headerBox}>
                 <Text style={styles.headerText}>{name || 'Restaurant'}</Text>
                 <TouchableOpacity
