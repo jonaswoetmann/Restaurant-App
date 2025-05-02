@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Button, StyleSheet, View} from 'react-native';
 import * as Location from 'expo-location';
-import { useMarker } from '@/components/MarkerContext';
+import { useMarker } from '@/app/contexts/MarkerContext';
 
 export default function Maps() {
     const initialLocation = {

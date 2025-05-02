@@ -21,3 +21,5 @@ export const MarkerProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useMarker = () => useContext(MarkerContext);
+
+export default MarkerContext

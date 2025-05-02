@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { useFavorites } from '../FavoriteContext';
-import { useTagPreferences } from '../TagPreferenceContext';
+import { useFavorites } from '../contexts/FavoriteContext';
+import { useTagPreferences } from '../contexts/TagPreferenceContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 

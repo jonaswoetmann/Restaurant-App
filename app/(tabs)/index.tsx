@@ -5,7 +5,7 @@ import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Constants from "expo-constants";
-import { useMarker } from '@/components/MarkerContext';
+import { useMarker } from '@/app/contexts/MarkerContext';
 
 export default function HomeScreen() {
     const [cafes, setCafes] = useState<{ id: string; name: string; route: string, rating: number }[]>([]);

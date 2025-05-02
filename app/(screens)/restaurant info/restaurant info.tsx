@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
 import StarRating from 'react-native-star-rating-widget';
 import { Ionicons } from '@expo/vector-icons';
-import { useFavorites } from '../../FavoriteContext';
+import { useFavorites } from '../../contexts/FavoriteContext';
 
 
 

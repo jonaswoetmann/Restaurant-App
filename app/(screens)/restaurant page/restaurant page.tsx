@@ -2,8 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import InfoIcon from '../restaurant page/InfoIcon';
-import { useCart } from '../cart/CartContext';
-import { useTagPreferences } from '../../TagPreferenceContext';
+import { useCart } from '../../contexts/CartContext';
+import { useTagPreferences } from '../../contexts/TagPreferenceContext';
 
 const defaultTheme = {
     name: 'Standard',
