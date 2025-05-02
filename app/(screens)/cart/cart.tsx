@@ -21,7 +21,7 @@ export default function CartScreen() {
         orderTable: parseInt(String(selectedTable)),
         restaurantId: restaurantId,
         userId: 1,
-        menuItems: cart.map(item => item.id),
+        menuItems: cart.flatMap(item => Array(item.quantity).fill(item.id)),
         comment: Comment,
       };
 
