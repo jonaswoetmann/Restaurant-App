@@ -1,9 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
-import MapView, {Marker} from 'react-native-maps';
-import {Button, StyleSheet, View} from 'react-native';
+import MapView, {Marker, Callout } from 'react-native-maps';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import { useMarker } from '@/app/contexts/MarkerContext';
 import { useRouter } from 'expo-router';
+
 
 export default function Maps() {
     const initialLocation = {
@@ -107,15 +108,18 @@ export default function Maps() {
                             latitude: restaurant.latitude,
                             longitude: restaurant.longitude,
                         }}
-                        title={restaurant.name}
-                        onPress={() => {
-                            setSelectedMarkerId(restaurant.id);
-                            router.push({
-                                pathname: '/restaurant page/restaurant page',
-                                params: { id: restaurant.id, name: restaurant.name },
-                            });
-                        }}
-                    />
+                        onPress={() => setSelectedMarkerId(restaurant.id)}
+                    >
+                        <Callout onPress={() => router.push({
+                            pathname: '/restaurant page/restaurant page',
+                            params: { id: restaurant.id, name: restaurant.name },
+                        })}>
+                            <View>
+                                <Text style={{ fontWeight: 'bold' }}>{restaurant.name}</Text>
+                                <Text style={{ color: 'blue' }}>Tap to view details</Text>
+                            </View>
+                        </Callout>
+                    </Marker>
                 ))}
 
             </MapView>
