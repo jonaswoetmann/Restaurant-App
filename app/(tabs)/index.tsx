@@ -13,12 +13,12 @@ export default function HomeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [searching, setSearching] = useState(false);
-    const mapAnimatedHeight = useRef(new Animated.Value(300)).current;
-    const mapHeightRef = useRef(300);
     const ScreenHeight = Dimensions.get('window').height;
     const HighSnap = ScreenHeight * 0.02;
-    const MidSnap = ScreenHeight * 0.4;
-    const LowSnap = ScreenHeight * 0.75;
+    const MidSnap = ScreenHeight * 0.35;
+    const LowSnap = ScreenHeight * 0.75 + (Dimensions.get('screen').height - Dimensions.get('window').height) * 0.25;
+    const mapHeightRef = useRef(MidSnap);
+    const mapAnimatedHeight = useRef(new Animated.Value(MidSnap)).current;
 
     const { selectedMarkerId } = useMarker();
 
@@ -196,6 +196,7 @@ useEffect(() => {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 marginTop:-5,
+                                marginBottom: -30,
                                 borderTopLeftRadius: 8,
                                 borderTopRightRadius: 8
                             }}>
