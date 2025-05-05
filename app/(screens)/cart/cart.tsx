@@ -120,6 +120,7 @@ export default function CartScreen() {
                 open={open}
                 setOpen={setOpen}
                 setValue={setSelectedTable}
+                listMode="SCROLLVIEW"
             />
             <Text style={styles.dropdownLabel}>Comments</Text>
             <TextInput
