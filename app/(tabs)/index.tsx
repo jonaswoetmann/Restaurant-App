@@ -16,7 +16,7 @@ export default function HomeScreen() {
     const ScreenHeight = Dimensions.get('screen').height;
     const HighSnap = ScreenHeight * 0.02;
     const MidSnap = ScreenHeight * 0.35;
-    const LowSnap = ScreenHeight * 0.75 + (Dimensions.get('screen').height - Dimensions.get('window').height) * 0.05;
+    const LowSnap = ScreenHeight * 0.75 + (Dimensions.get('window').height - Dimensions.get('screen').height) * 0.45;
     const mapHeightRef = useRef(MidSnap);
     const mapAnimatedHeight = useRef(new Animated.Value(MidSnap)).current;
     const gestureStartTimeRef = useRef<number | null>(null);
