@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, View, Dimensions} from 'react-native';
 import {Colors} from '@/constants/Colors';
 
 type ButtonProps = {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     width: 320,
-    height: 100,
+    height: Dimensions.get('screen').height * 0.11,
     textAlignVertical: 'center',
     elevation: 4,
     shadowColor: '#000',
