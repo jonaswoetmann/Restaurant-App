@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, PanResponder, Pressable, Dimensions} from 'react-native';
+import {Animated, View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard, PanResponder, Dimensions} from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CafeList } from '@/components/ui/CafeList';
 import Maps from '@/components/ui/Maps';
@@ -19,6 +19,7 @@ export default function HomeScreen() {
     const LowSnap = ScreenHeight * 0.75 + (Dimensions.get('screen').height - Dimensions.get('window').height) * 0.05;
     const mapHeightRef = useRef(MidSnap);
     const mapAnimatedHeight = useRef(new Animated.Value(MidSnap)).current;
+    const gestureStartTimeRef = useRef<number | null>(null);
 
     const { selectedMarkerId } = useMarker();
 
@@ -26,6 +27,9 @@ export default function HomeScreen() {
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: () => true,
+            onPanResponderGrant: (_, ) => {
+                gestureStartTimeRef.current = Date.now();
+            },
             onPanResponderMove: (_, gestureState) => {
                 let newHeight = mapHeightRef.current + gestureState.dy;
                 if (newHeight > LowSnap) newHeight = LowSnap;
@@ -33,9 +37,17 @@ export default function HomeScreen() {
                 mapAnimatedHeight.setValue(newHeight);
             },
             onPanResponderRelease: (_, gestureState) => {
-                const { dy, vy } = gestureState;
-                let newHeight = mapHeightRef.current + dy;
+                const { dy, vy, dx } = gestureState;
+                const gestureDuration = Date.now() - (gestureStartTimeRef.current ?? 0);
+                const TAP_THRESHOLD = 10;
+                const TIME_THRESHOLD = 200;
 
+                if (Math.abs(dy) < TAP_THRESHOLD && Math.abs(dx) < TAP_THRESHOLD && gestureDuration < TIME_THRESHOLD) {
+                    handleBarPress();
+                    return;
+                }
+
+                let newHeight = mapHeightRef.current + dy;
                 if (newHeight > LowSnap) newHeight = LowSnap;
                 if (newHeight < HighSnap) newHeight = HighSnap;
 
@@ -52,7 +64,6 @@ export default function HomeScreen() {
                 });
 
                 const VELOCITY_THRESHOLD = 0.3;
-
                 if (Math.abs(vy) >= VELOCITY_THRESHOLD) {
                     if (vy < 0 && targetSnapIndex > 0) {
                         targetSnapIndex--;
@@ -177,20 +188,18 @@ useEffect(() => {
                             >
                                 <Maps />
                             </Animated.View>
-                            <Pressable onPress={handleBarPress}>
-                                <View
+                            <View
                                 {...panResponder.panHandlers}
-                                    style={{
-                                        height: 30,
-                                        backgroundColor: '#ccc',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        position: 'relative',
-                                    }}
-                                >
-                                    <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
-                                </View>
-                            </Pressable>
+                                style={{
+                                    height: 30,
+                                    backgroundColor: '#ccc',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                }}
+                            >
+                                <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#bbb' }} />
+                            </View>
                             <ThemedView colorName = 'page' style={{
                                 flex: 1,
                                 justifyContent: 'center',
