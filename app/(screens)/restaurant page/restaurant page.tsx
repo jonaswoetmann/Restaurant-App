@@ -126,7 +126,9 @@ export default function CafeScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.headerBox}>
-                <Text style={styles.headerText}>{restaurant?.name || 'Loading...'}</Text>
+                <View style={styles.headerNameContainer}>
+                    <Text style={styles.headerText} numberOfLines={2} ellipsizeMode="tail">{restaurant?.name || 'Loading...'}</Text>
+                </View>
                 <View style={styles.headerActions}>
                     <TouchableOpacity
                         onPress={() => {
@@ -272,6 +274,12 @@ const createStyles = (theme: typeof defaultTheme) =>
             borderBottomWidth: 1,
             borderBottomColor: '#ccc',
             flexDirection: 'row',
+        },
+        headerNameContainer: {
+            maxWidth: 200,
+            flexShrink: 1,
+            flexGrow: 0,
+            minWidth: 0,
         },
         headerText: {
             fontSize: 24,
