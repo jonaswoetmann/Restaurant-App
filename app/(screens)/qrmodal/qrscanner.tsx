@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { Button, StyleSheet, Text, View, Linking } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function QRScannerModal() {
@@ -25,8 +25,13 @@ export default function QRScannerModal() {
     if (!scanned) {
       setScanned(true);
 
-      Linking.openURL(data).catch(err=>console.error('Something went wrong!', err));
-      setTimeout(() => router.back(), 1000);
+      const match = data.match(/id:\s*(\d+)/);
+      if (match) {
+        const id = match[1];
+        router.push(`/restaurant page/restaurant page?id=${id}`);
+      } else {
+        console.warn('QR code does not contain a valid restaurant ID');
+      }
     }
   };
 
