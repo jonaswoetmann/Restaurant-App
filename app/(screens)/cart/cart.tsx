@@ -5,6 +5,7 @@ import { OrderButton } from './OrderButton';
 import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';
 import {useLocalSearchParams} from "expo-router";
+import { router } from 'expo-router';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
@@ -65,6 +66,29 @@ export default function CartScreen() {
       }
 
       await WebBrowser.openBrowserAsync(url);
+
+      const intervalId = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(`http://130.225.170.52:10331/api/orders/byorderId/${orderId}/`);
+          const text = await statusResponse.text();
+
+          try {
+            const statusData = JSON.parse(text);
+
+            if (Array.isArray(statusData) && statusData[0]?.ispaid === true) {
+              clearInterval(intervalId);
+              if (typeof removeFromCart === 'function') {
+                cart.forEach(item => removeFromCart(item.id));
+              }
+              router.back();
+            }
+          } catch (parseError) {
+            console.error('Invalid JSON from payment status:', text);
+          }
+        } catch (error) {
+          console.error('Error checking payment status.', error);
+        }
+      }, 100);
 
     } catch (error) {
       console.error(error);
