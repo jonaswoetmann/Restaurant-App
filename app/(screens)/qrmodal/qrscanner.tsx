@@ -28,7 +28,8 @@ export default function QRScannerModal() {
       const match = data.match(/id:\s*(\d+)/);
       if (match) {
         const id = match[1];
-        router.push(`/restaurant page/restaurant page?id=${id}`);
+        router.dismiss();
+        setTimeout(() => router.push(`/restaurant page/restaurant page?id=${id}`), 0);
       } else {
         console.warn('QR code does not contain a valid restaurant ID');
       }
