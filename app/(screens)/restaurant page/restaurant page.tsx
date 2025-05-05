@@ -158,7 +158,14 @@ export default function CafeScreen() {
                         <InfoIcon />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => router.push('/cart/cart')}
+                        onPress={() => {
+                            router.push({
+                                pathname: '/cart/cart',
+                                params: {
+                                    tables: restaurant?.totaltables,
+                                }
+                            });
+                        }}
                         style={styles.cartButton}
                     >
                         <Text style={styles.cartText}>Cart</Text>

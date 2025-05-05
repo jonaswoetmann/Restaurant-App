@@ -4,12 +4,14 @@ import { useCart } from './CartContext';
 import { OrderButton } from './OrderButton';
 import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';
+import {useLocalSearchParams} from "expo-router";
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
   const [Comment, setComment] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const { tables } = useLocalSearchParams();
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -107,7 +109,7 @@ export default function CartScreen() {
           <View style={styles.cartFooter}>
             <Text style={styles.dropdownLabel}>Select Table</Text>
             <Dropdown
-                items={Array.from({ length: 5 }, (_, i) => ({
+                items={Array.from({ length: Number(tables) }, (_, i) => ({
                   label: `Table ${i + 1}`,
                   value: (i + 1).toString(),
                 }))}
