@@ -77,10 +77,10 @@ export default function CartScreen() {
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
           <View style={styles.cartHeader}>
-            <Text style={styles.text}>Your Cart</Text>
+            <Text style={styles.title}>Your Cart</Text>
           </View>
         }
-        ListEmptyComponent={<Text>Your cart is empty.</Text>}
+        ListEmptyComponent={<Text style={styles.text}>Your cart is empty.</Text>}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.name}>{item.name}</Text>
@@ -146,10 +146,15 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: '#fff'
   },
-  text: {
+  title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+    marginLeft: 16,
   },
   dropdownLabel: {
     fontSize: 16,
