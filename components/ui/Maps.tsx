@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
-import MapView, {Marker, Callout } from 'react-native-maps';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import MapView, {Marker } from 'react-native-maps';
+import { View, Button, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import { useMarker } from '@/app/contexts/MarkerContext';
 import { useRouter } from 'expo-router';
@@ -100,28 +100,22 @@ export default function Maps() {
                 }
 
                 {restaurants.map((restaurant) => (
-                  <Marker
-                    key={restaurant.id}
-                    coordinate={{
-                      latitude: restaurant.latitude,
-                      longitude: restaurant.longitude,
-                    }}
-                  >
-                    <Callout
-                      tooltip={false} // <- ensures native look
-                      onPress={() =>
-                        router.push({
-                          pathname: '/restaurant page/restaurant page',
-                          params: { id: restaurant.id, name: restaurant.name },
-                        })
-                      }
-                    >
-                      <View style={{ padding: 4 }}>
-                        <Text style={{ fontWeight: 'bold' }}>{restaurant.name}</Text>
-                        <Text style={{ color: 'blue' }}>Tap to view details</Text>
-                      </View>
-                    </Callout>
-                  </Marker>
+                    <Marker
+                        key={restaurant.id}
+                        coordinate={{
+                            latitude: restaurant.latitude,
+                            longitude: restaurant.longitude,
+                        }}
+                        title={restaurant.name}
+                        description="Tap to view details"
+                        onPress={() => setSelectedMarkerId(restaurant.id)}
+                        onCalloutPress={() =>
+                            router.push({
+                                pathname: '/restaurant page/restaurant page',
+                                params: { id: restaurant.id, name: restaurant.name },
+                            })
+                        }
+                    />
                 ))}
 
             </MapView>
