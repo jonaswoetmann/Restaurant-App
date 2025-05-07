@@ -92,13 +92,11 @@ export default function Maps() {
             >
 
                 { myLocation.latitude && myLocation.longitude &&
-                <Marker
-                    coordinate={{
-                        latitude: myLocation.latitude,
-                        longitude: myLocation.longitude
-                    }}
-                    title={'Your Location'}
-                    />
+                  <Marker coordinate={myLocation}>
+                      <View style={styles.googleMapsDotOuter}>
+                          <View style={styles.googleMapsDotInner} />
+                      </View>
+                  </Marker>
                 }
 
                 {restaurants.map((restaurant) => (
@@ -146,5 +144,19 @@ const styles = StyleSheet.create({
         bottom: 20,
         width: '100%',
         alignItems: 'center',
-    }
+    },
+    googleMapsDotOuter: {
+        height: 24,
+        width: 24,
+        borderRadius: 12,
+        backgroundColor: 'rgba(0, 122, 255, 0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    googleMapsDotInner: {
+        height: 12,
+        width: 12,
+        borderRadius: 6,
+        backgroundColor: '#007AFF',
+    },
 });

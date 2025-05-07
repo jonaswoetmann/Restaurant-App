@@ -4,12 +4,15 @@ import { useCart } from '../../contexts/CartContext';
 import { OrderButton } from './OrderButton';
 import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';
+import {useLocalSearchParams} from "expo-router";
+import { router } from 'expo-router';
 
 export default function CartScreen() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, restaurantId } = useCart();
   const [selectedTable, setSelectedTable] = React.useState(1);
   const [Comment, setComment] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const { tables } = useLocalSearchParams();
 
   const handleOrder = async () => {
     if (cart.length === 0) {
@@ -64,6 +67,29 @@ export default function CartScreen() {
 
       await WebBrowser.openBrowserAsync(url);
 
+      const intervalId = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(`http://130.225.170.52:10331/api/orders/byorderId/${orderId}/`);
+          const text = await statusResponse.text();
+
+          try {
+            const statusData = JSON.parse(text);
+
+            if (Array.isArray(statusData) && statusData[0]?.ispaid === true) {
+              clearInterval(intervalId);
+              if (typeof removeFromCart === 'function') {
+                cart.forEach(item => removeFromCart(item.id));
+              }
+              router.back();
+            }
+          } catch (parseError) {
+            console.error('Invalid JSON from payment status:', text);
+          }
+        } catch (error) {
+          console.error('Error checking payment status.', error);
+        }
+      }, 100);
+
     } catch (error) {
       console.error(error);
       alert('An error occurred while placing the order.');
@@ -77,10 +103,10 @@ export default function CartScreen() {
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={
           <View style={styles.cartHeader}>
-            <Text style={styles.text}>Your Cart</Text>
+            <Text style={styles.title}>Your Cart</Text>
           </View>
         }
-        ListEmptyComponent={<Text>Your cart is empty.</Text>}
+        ListEmptyComponent={<Text style={styles.text}>Your cart is empty.</Text>}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.name}>{item.name}</Text>
@@ -107,7 +133,7 @@ export default function CartScreen() {
           <View style={styles.cartFooter}>
             <Text style={styles.dropdownLabel}>Select Table</Text>
             <Dropdown
-                items={Array.from({ length: 5 }, (_, i) => ({
+                items={Array.from({ length: Number(tables) }, (_, i) => ({
                   label: `Table ${i + 1}`,
                   value: (i + 1).toString(),
                 }))}
@@ -118,6 +144,7 @@ export default function CartScreen() {
                 open={open}
                 setOpen={setOpen}
                 setValue={setSelectedTable}
+                listMode="SCROLLVIEW"
             />
             <Text style={styles.dropdownLabel}>Comments</Text>
             <TextInput
@@ -146,10 +173,15 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: '#fff'
   },
-  text: {
+  title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+    marginLeft: 16,
   },
   dropdownLabel: {
     fontSize: 16,
