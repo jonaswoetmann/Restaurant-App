@@ -102,24 +102,28 @@ export default function Maps() {
                 }
 
                 {restaurants.map((restaurant) => (
-                    <Marker
-                        key={restaurant.id}
-                        coordinate={{
-                            latitude: restaurant.latitude,
-                            longitude: restaurant.longitude,
-                        }}
-                        onPress={() => setSelectedMarkerId(restaurant.id)}
+                  <Marker
+                    key={restaurant.id}
+                    coordinate={{
+                      latitude: restaurant.latitude,
+                      longitude: restaurant.longitude,
+                    }}
+                  >
+                    <Callout
+                      tooltip={false} // <- ensures native look
+                      onPress={() =>
+                        router.push({
+                          pathname: '/restaurant page/restaurant page',
+                          params: { id: restaurant.id, name: restaurant.name },
+                        })
+                      }
                     >
-                        <Callout onPress={() => router.push({
-                            pathname: '/restaurant page/restaurant page',
-                            params: { id: restaurant.id, name: restaurant.name },
-                        })}>
-                            <View>
-                                <Text style={{ fontWeight: 'bold' }}>{restaurant.name}</Text>
-                                <Text style={{ color: 'blue' }}>Tap to view details</Text>
-                            </View>
-                        </Callout>
-                    </Marker>
+                      <View style={{ padding: 4 }}>
+                        <Text style={{ fontWeight: 'bold' }}>{restaurant.name}</Text>
+                        <Text style={{ color: 'blue' }}>Tap to view details</Text>
+                      </View>
+                    </Callout>
+                  </Marker>
                 ))}
 
             </MapView>
