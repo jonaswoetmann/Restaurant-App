@@ -38,7 +38,7 @@ export default function RestaurantInfoScreen() {
     const restaurantId = Number(id);
     const isFavorite = favorites.some((fav: { id: number }) => fav.id === restaurantId);
 
-    const secondaryColor = (themeSecondaryColor as string) || defaultTheme.secondary;
+    const secondaryColor = '#f4845f';
 
     const styles = useMemo(() => createStyles(secondaryColor), [secondaryColor]);
 
@@ -120,7 +120,7 @@ export default function RestaurantInfoScreen() {
 
 
             <MapView
-                style={styles.map}
+                style={{ height: 200, width: '100%' }}
                 initialRegion={{
                     latitude: lat,
                     longitude: lon,
@@ -228,11 +228,14 @@ const createStyles = (secondaryColor: string) => StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
     },
-    map: {
-        width: Dimensions.get('window').width,
-        height: 200,
-        marginVertical: 8,
-    },
+    // mapContainer: {
+    //     flex: 1,
+    // },
+    // map: {
+    //     width: Dimensions.get('window').width,
+    //     height: 200,
+    //     marginVertical: 8,
+    // },
     sectionContainer: { marginTop: 10 },
     section: {
         backgroundColor: '#fff',
@@ -259,5 +262,3 @@ const createStyles = (secondaryColor: string) => StyleSheet.create({
         backgroundColor: '#fff',
     },
 });
-
-
