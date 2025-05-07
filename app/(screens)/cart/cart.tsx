@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
-import { useCart } from './CartContext';
+import { useCart } from '../../contexts/CartContext';
 import { OrderButton } from './OrderButton';
 import Dropdown from 'react-native-dropdown-picker';
 import * as WebBrowser from 'expo-web-browser';

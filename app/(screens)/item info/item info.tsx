@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useTagPreferences } from '../../TagPreferenceContext';
+import { useTagPreferences } from '../../contexts/TagPreferenceContext';
 
 export default function ItemInfoScreen() {
   const { itemName, sectionName, description, photoLink, tags } = useLocalSearchParams();

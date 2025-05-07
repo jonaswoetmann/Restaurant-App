@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { CartProvider } from './(screens)/cart/CartContext';
-import { MarkerProvider } from '@/components/MarkerContext';
-import { FavoriteProvider } from './FavoriteContext'; // ✅ Ensure this is correct
-import { PreferenceProvider } from './TagPreferenceContext';
+import { CartProvider } from './contexts/CartContext';
+import { MarkerProvider } from '@/app/contexts/MarkerContext';
+import { FavoriteProvider } from './contexts/FavoriteContext'; // ✅ Ensure this is correct
+import { PreferenceProvider } from './contexts/TagPreferenceContext';
 
 // Prevent splash screen auto-hide until fonts are loaded
 SplashScreen.preventAutoHideAsync();
@@ -49,4 +49,4 @@ export default function RootLayout() {
 }
 
 
-//'./FavoriteContext';
+
