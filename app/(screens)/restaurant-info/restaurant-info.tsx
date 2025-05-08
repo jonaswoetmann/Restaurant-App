@@ -38,6 +38,7 @@ export default function RestaurantInfoScreen() {
     const restaurantId = Number(id);
     const isFavorite = favorites.some((fav: { id: number }) => fav.id === restaurantId);
 
+    //const secondaryColor = (themeSecondaryColor as string) || defaultTheme.secondary;
     const secondaryColor = '#f4845f';
 
     const styles = useMemo(() => createStyles(secondaryColor), [secondaryColor]);
@@ -120,6 +121,7 @@ export default function RestaurantInfoScreen() {
 
 
             {/*<MapView
+                //style={styles.map}
                 style={{ height: 200, width: '100%' }}
                 initialRegion={{
                     latitude: lat,
@@ -136,7 +138,6 @@ export default function RestaurantInfoScreen() {
             </MapView>*/}
 
             <View style={styles.sectionContainer}>
-                {/* About & Info */}
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>About</Text>
                     <Text style={styles.descriptionText}>{description || 'No description available.'}</Text>
@@ -162,7 +163,6 @@ export default function RestaurantInfoScreen() {
                     )}
                 </View>
 
-                {/* Review Form */}
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>Leave a Review</Text>
                     <StarRating
@@ -170,7 +170,7 @@ export default function RestaurantInfoScreen() {
                         onChange={(rating) => setNewRating(String(rating))}
                         maxStars={5}
                         starSize={30}
-                        enableHalfStar={false}  // disables half-stars
+                        enableHalfStar={false}
                     />
                     <TextInput
                         placeholder="Write your review here..."
@@ -193,7 +193,7 @@ export default function RestaurantInfoScreen() {
                                         onPress: () => {
                                             const subject = encodeURIComponent(`Report for Restaurant: ${name}`);
                                             const body = encodeURIComponent('Please describe the issue you encountered.');
-                                            const email = 'support@example.com'; // replace with your real support email
+                                            const email = 'support@example.com';
                                             Linking.openURL(`mailto:${email}?subject=${subject}&body=${body}`);
                                         },
                                     },
@@ -212,7 +212,10 @@ export default function RestaurantInfoScreen() {
 }
 
 const createStyles = (secondaryColor: string) => StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff'
+    },
     headerBox: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -236,7 +239,9 @@ const createStyles = (secondaryColor: string) => StyleSheet.create({
     //     height: 200,
     //     marginVertical: 8,
     // },
-    sectionContainer: { marginTop: 10 },
+    sectionContainer: {
+        marginTop: 10
+    },
     section: {
         backgroundColor: '#fff',
         padding: 20,
@@ -250,8 +255,14 @@ const createStyles = (secondaryColor: string) => StyleSheet.create({
         shadowRadius: 8,
         elevation: 3,
     },
-    sectionText: { fontSize: 18, fontWeight: 'bold' },
-    descriptionText: { fontSize: 16, marginTop: 8 },
+    sectionText: {
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
+    descriptionText: {
+        fontSize: 16,
+        marginTop: 8
+    },
     input: {
         borderWidth: 1,
         borderColor: '#ccc',

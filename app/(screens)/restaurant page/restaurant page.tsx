@@ -141,7 +141,7 @@ export default function CafeScreen() {
                             ));
 
                             router.push({
-                                pathname: '/restaurant info/restaurant info',
+                                pathname: '/restaurant-info/restaurant-info',
                                 params: {
                                     id: id,
                                     name: restaurant?.name,
