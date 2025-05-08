@@ -119,7 +119,7 @@ export default function RestaurantInfoScreen() {
             </View>
 
 
-            <MapView
+            {/*<MapView
                 style={{ height: 200, width: '100%' }}
                 initialRegion={{
                     latitude: lat,
@@ -133,7 +133,7 @@ export default function RestaurantInfoScreen() {
                     title={name?.toString()}
                     description={description?.toString()}
                 />
-            </MapView>
+            </MapView>*/}
 
             <View style={styles.sectionContainer}>
                 {/* About & Info */}
