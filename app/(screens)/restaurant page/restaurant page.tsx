@@ -142,17 +142,17 @@ export default function CafeScreen() {
 
                             router.push({
                                 pathname: '/restaurant-info/restaurant-info',
-                                params: {
-                                    id: id,
-                                    name: restaurant?.name,
-                                    description: restaurant?.description || '',
-                                    openingtime: restaurant?.openingtime || '',
-                                    closingtime: restaurant?.closingtime || '',
-                                    latitude: restaurant?.latitude?.toString() || '0',
-                                    longitude: restaurant?.longitude?.toString() || '0',
-                                    themeSecondaryColor: themeState.colors.secondary,
-                                    tags: allTags.join(','),
-                                },
+                                //params: {
+                                //    id: id,
+                                //    name: restaurant?.name,
+                                //    description: restaurant?.description || '',
+                                //    openingtime: restaurant?.openingtime || '',
+                                //    closingtime: restaurant?.closingtime || '',
+                                //    latitude: restaurant?.latitude?.toString() || '0',
+                                //    longitude: restaurant?.longitude?.toString() || '0',
+                                //    themeSecondaryColor: themeState.colors.secondary,
+                                //    tags: allTags.join(','),
+                                //},
                             });
                         }}
                         style={styles.iconContainer}

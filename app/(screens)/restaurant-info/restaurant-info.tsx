@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linking } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+//import MapView, { Marker } from 'react-native-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
 import StarRating from 'react-native-star-rating-widget';
@@ -21,7 +21,6 @@ const defaultTheme = {
 };
 
 export default function RestaurantInfoScreen() {
-    const router = useRouter();
     const { id, name, description, openingtime, closingtime, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
 
     const lat = parseFloat(latitude as string) || 0;
@@ -137,7 +136,7 @@ export default function RestaurantInfoScreen() {
                 />
             </MapView>*/}
 
-            <View style={styles.sectionContainer}>
+<View style={styles.sectionContainer}>
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>About</Text>
                     <Text style={styles.descriptionText}>{description || 'No description available.'}</Text>
