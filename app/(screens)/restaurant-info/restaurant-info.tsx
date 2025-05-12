@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFavorites } from '../../contexts/FavoriteContext';
@@ -20,7 +20,6 @@ const defaultTheme = {
 };
 
 export default function RestaurantInfoScreen() {
-    const router = useRouter();
     const { id, name, description, openingtime, closingtime, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
 
     const lat = parseFloat(latitude as string) || 0;
@@ -37,8 +36,7 @@ export default function RestaurantInfoScreen() {
     const restaurantId = Number(id);
     const isFavorite = favorites.some((fav: { id: number }) => fav.id === restaurantId);
 
-    //const secondaryColor = (themeSecondaryColor as string) || defaultTheme.secondary;
-    const secondaryColor = '#f4845f';
+    const secondaryColor = (themeSecondaryColor as string) || defaultTheme.secondary;
 
     const styles = useMemo(() => createStyles(secondaryColor), [secondaryColor]);
 
