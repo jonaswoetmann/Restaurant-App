@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linking } from 'react-native';
-//import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TextInput, Button, Alert } from 'react-native';
-import StarRating from 'react-native-star-rating-widget';
 import { Ionicons } from '@expo/vector-icons';
 import { useFavorites } from '../../contexts/FavoriteContext';
 
@@ -21,6 +20,7 @@ const defaultTheme = {
 };
 
 export default function RestaurantInfoScreen() {
+    const router = useRouter();
     const { id, name, description, openingtime, closingtime, latitude, longitude, themeSecondaryColor,tags } = useLocalSearchParams();
 
     const lat = parseFloat(latitude as string) || 0;
@@ -119,9 +119,8 @@ export default function RestaurantInfoScreen() {
             </View>
 
 
-            {/*<MapView
-                //style={styles.map}
-                style={{ height: 200, width: '100%' }}
+            <MapView
+                style={styles.map}
                 initialRegion={{
                     latitude: lat,
                     longitude: lon,
@@ -134,9 +133,9 @@ export default function RestaurantInfoScreen() {
                     title={name?.toString()}
                     description={description?.toString()}
                 />
-            </MapView>*/}
+            </MapView>
 
-<View style={styles.sectionContainer}>
+            <View style={styles.sectionContainer}>
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>About</Text>
                     <Text style={styles.descriptionText}>{description || 'No description available.'}</Text>
@@ -164,13 +163,15 @@ export default function RestaurantInfoScreen() {
 
                 <View style={styles.section}>
                     <Text style={styles.sectionText}>Leave a Review</Text>
-                    <StarRating
-                        rating={Number(newRating)}
-                        onChange={(rating) => setNewRating(String(rating))}
-                        maxStars={5}
-                        starSize={30}
-                        enableHalfStar={false}
-                    />
+                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <TouchableOpacity key={star} onPress={() => setNewRating(String(star))}>
+                                <Text style={{ fontSize: 30, marginHorizontal: 2 }}>
+                                    {Number(newRating) >= star ? '⭐' : '☆'}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                     <TextInput
                         placeholder="Write your review here..."
                         value={newText}
@@ -230,14 +231,11 @@ const createStyles = (secondaryColor: string) => StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
     },
-    // mapContainer: {
-    //     flex: 1,
-    // },
-    // map: {
-    //     width: Dimensions.get('window').width,
-    //     height: 200,
-    //     marginVertical: 8,
-    // },
+    map: {
+        width: Dimensions.get('window').width,
+        height: 200,
+        marginVertical: 8,
+    },
     sectionContainer: {
         marginTop: 10
     },
